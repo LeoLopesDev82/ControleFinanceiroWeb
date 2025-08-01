@@ -1,0 +1,108 @@
+﻿@using ControleFinanceiroWeb.Models.Domain
+
+@{
+    var buttonsInfo = ViewBag.ButtonsInfo as List<ButtonInfoModel>;
+}
+
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>@ViewData["Title"] - ControleFinanceiroWeb</title>
+
+    <link rel="stylesheet" href="~/css/messagebox.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/statementTypeModal.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/statementDetailsModal.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/categoryModal.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/categoryDetailsModal.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+    @RenderSection("Styles", required: false)
+</head>
+
+<body>
+    <input type="hidden" id="hidden-id" value="@ViewBag.SelectedId" />
+
+    <header class="header-top">
+        <button id="btn-summary" class="header-btn" data-controller="Summary" data-action="Index">
+            <img src="~/images/grafico25.png" alt="Resumo" class="btn-icon" />
+            Resumo
+        </button>
+
+        <div class="header-separator"></div>
+
+        <button id="btn-statement0" class="header-btn" data-controller="Transactions" data-action="Index" data-id="0">
+            <img src="~/images/bill25.png" alt="Extrato" class="btn-icon" />
+            Extrato
+        </button>
+
+        @if (buttonsInfo != null)
+        {
+            foreach (var button in buttonsInfo)
+            {
+                <button class="header-btn"
+                        data-controller="Transactions"
+                        data-action="Index"
+                        data-id="@button.Id">
+                    <img src="~/images/atmCard25.png" alt="@button.Description" class="btn-icon" />
+                    @button.Description
+                </button>
+            }
+        }
+
+        <button id="btn-add-statement-type" class="header-add-btn">
+            <img src="~/images/plus25.png" alt="Variavel" class="btn-icon" />            
+        </button>
+    </header>
+
+
+    <div class="container">
+        <main role="main" class="pb-3">
+            <div id="toolsContainer">
+                <label for="datePickerStartDate">Data Inicial</label>
+                <input type="date" id="datePickerStartDate" value="@ViewBag.StartDate" />
+
+                <label for="datePickerEndDate">Data Final</label>
+                <input type="date" id="datePickerEndDate" value="@ViewBag.EndDate" />
+
+                <button id="btnRefresh" class="icon-button">
+                    <img src="~/images/refresh25.png" alt="Refresh" class="btn-icon" />
+                </button>
+
+                <div class="tools-separator"></div>
+
+                <label id="titleLabel">@ViewBag.ToolTitle</label>
+
+                @if ((ViewBag.SelectedId ?? 0) > 0)
+                {
+                    <div class="right-buttons">
+                        <button id="btnEdit" class="icon-button">
+                            <img src="~/images/edit25.png" alt="Editar" class="btn-icon" />
+                        </button>
+
+                        <button id="btnDelete" class="icon-button">
+                            <img src="~/images/trash25.png" alt="Excluir" class="btn-icon" />
+                        </button>
+                    </div>
+                }
+            </div>
+
+            @RenderBody()            
+        </main>
+    </div>
+    @await Html.PartialAsync("_StatementTypeModal")    
+    @await Html.PartialAsync("_MessageBox")
+
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/messagebox.js" asp-append-version="true"></script>
+    <script src="~/js/statementTypeModal.js" asp-append-version="true"></script>
+    <script src="~/js/statementDetailsModal.js" asp-append-version="true"></script>
+    <script src="~/js/categoryModal.js" asp-append-version="true"></script>
+    <script src="~/js/fetchHelpers.js" asp-append-version="true"></script>
+</body>
+
+</html>

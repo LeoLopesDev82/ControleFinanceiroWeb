@@ -1,0 +1,40 @@
+﻿<div id="modal-category-management" class="cf-modal-overlay" style="display: none;">
+    <div class="cf-modal-box category-modal-box">
+        <div class="cf-modal-header category-modal-header">
+            <span>Cadastro de categorias</span>
+            <button id="modal-category-close" class="modal-close-button">&times;</button>
+        </div>
+
+        <div id="category-modal-toolbar" class="category-toolbar">
+            <button id="btn-category-add-row">
+                <img src="~/images/pluss25.png" alt="Incluir linha" class="btn-icon" />
+                Incluir linha
+            </button>
+
+            <button id="btn-category-edit-row">
+                <img src="~/images/edit25.png" alt="Editar linha" class="btn-icon" />
+                Editar linha
+            </button>
+
+            <button id="btn-category-delete-row">
+                <img src="~/images/trash25.png" alt="Excluir linha" class="btn-icon" />
+                Excluir linha
+            </button>
+        </div>
+
+        <div class="category-grid">
+            <div id="header-category-grid" class="grid-header" style="grid-template-columns: 1fr;">
+                <div>Categoria</div>
+            </div>
+
+            <div id="body-category-grid" class="grid-body">
+                @for (int i = 1; i <= 20; i++)
+                {
+                    <div class="grid-row" data-id="@i" style="grid-template-columns: 1fr;">
+                        <div>Categoria Fictícia @i</div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

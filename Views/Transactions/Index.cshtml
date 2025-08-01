@@ -1,0 +1,70 @@
+﻿@model ControleFinanceiroDesktop.Models.ViewModels.MainModel
+
+@{
+    ViewData["Title"] = "Transactions";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/transactions.css" asp-append-version="true" />
+}
+
+<input type="file" id="excelFileInput" accept=".xlsx,.xls" style="display: none;" />
+
+<div class="transactions-tool-bar">
+    <button id="btn-add-row">
+        <img src="~/images/pluss25.png" alt="Incluir linha" class="btn-icon" />
+        Incluir linha
+    </button>
+
+    <button id="btn-edit-row">
+        <img src="~/images/edit25.png" alt="Editar linha" class="btn-icon" />
+        Editar linha
+    </button>
+
+    <button id="btn-delete-row">
+        <img src="~/images/trash25.png" alt="Excluir linha" class="btn-icon" />
+        Excluir linha
+    </button>
+
+    <span class="toolbar-separator">|</span>
+
+    <button id="btn-excel">
+        <img src="~/images/excel25.png" alt="Exportar planilha" class="btn-icon" />
+        Exportar planilha
+    </button>
+
+    <button id="btn-tag-categories">
+        <img src="~/images/Identify.png" alt="Identificar itens" class="btn-icon" />
+        Identificar itens
+    </button>
+</div>
+
+<div class="transactions-grid">
+    <div id="dgv-transactions-header" class="grid-header">
+        <div>Data Movimento</div>
+        <div>Data Vencimento</div>
+        <div>Histórico</div>
+        <div>Categoria</div>
+        <div>Valor</div>
+    </div>
+
+    <div id="dgv-transactions-body" class="grid-body">
+        @if (Model.statementDtos != null && Model.statementDtos.Any())
+        {
+            foreach (var item in Model.statementDtos)
+            {
+                <div class="grid-row" data-statement-id="@item.Id">
+                    <div>@(item.TransactionDate?.ToString("dd/MM/yyyy") ?? "-")</div>
+                    <div>@(item.DueDate?.ToString("dd/MM/yyyy") ?? "-")</div>
+                    <div>@item.Description</div>
+                    <div>@item.EntryDescription</div>
+                    <div>R$ @((item.Amount ?? 0).ToString("N2"))</div>
+                </div>
+            }
+        }
+    </div>
+</div>
+
+@await Html.PartialAsync("_StatementDetailsModal", Model.Categories)
+@await Html.PartialAsync("_CategoryModal")
+@await Html.PartialAsync("_CategoryDetailsModal")

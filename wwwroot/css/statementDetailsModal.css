@@ -1,0 +1,92 @@
+﻿.statement-details-modal-box {
+    width: 450px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    animation: fadeIn 0.2s ease-out;
+    padding: 0;
+    gap: 0;
+}
+
+.statement-details-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #2e7d32;
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+    padding: 16px 20px;
+    border-radius: 8px 8px 0 0;
+    box-shadow: inset 0 -3px 6px rgba(0, 0, 0, 0.2);
+}
+
+.statement-details-toolbar {
+    background-color: #e6f1e8;
+    padding: 0;
+    height: 30px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 10px;
+    border-top: 2px solid #2e7d32;
+}
+
+.statement-details-save-button {
+    background-color: #e6f1e8;
+    color: #2e7d32;
+    border: none;
+    border-radius: 4px;
+    padding: 0 10px 0 8px;
+    font-size: 13px;
+    font-weight: bold;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+    margin-left: 8px;
+}
+
+    .statement-details-save-button img {
+        position: relative;
+        top: 2px;
+    }
+
+    .statement-details-save-button:hover {
+        background-color: #d5e7d7;
+        color: #1b5e20;
+    }
+
+.statement-details-body {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#statement-details-movement-date,
+#statement-details-due-date,
+#statement-details-history,
+#statement-details-category,
+#statement-details-value {
+    padding: 10px 20px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    width: 100%;
+    box-sizing: border-box;
+    transition: border-color 0.2s;
+}
+
+    #statement-details-movement-date:focus,
+    #statement-details-due-date:focus,
+    #statement-details-history:focus,
+    #statement-details-category:focus,
+    #statement-details-value:focus {
+        border-color: #2e7d32;
+        outline: none;
+    }

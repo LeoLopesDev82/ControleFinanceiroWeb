@@ -1,0 +1,83 @@
+﻿@model ControleFinanceiroDesktop.Models.ViewModels.MainModel
+
+@{
+    ViewData["Title"] = "Summary";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/summary.css" asp-append-version="true" />
+}
+
+<div class="summary-container">
+    <div class="grid-wrapper">
+        <label class="grid-title">Resumo geral</label>
+
+        <div class="summary-grid">
+            <div class="grid-header summary-header">
+                <div>Entradas</div>
+                <div>Saídas</div>
+                <div>Diferença</div>
+            </div>
+
+            <div class="grid-body">
+                <div class="grid-row">
+                    <div>R$ @(Model.SummaryDto?.Credits?.ToString("N2") ?? "0,00")</div>
+                    <div>R$ @(Model.SummaryDto?.Debits?.ToString("N2") ?? "0,00")</div>
+                    <div>R$ @(Model.SummaryDto?.Balance?.ToString("N2") ?? "0,00")</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid-wrapper">
+        <label class="grid-title">Resumo de entradas</label>
+
+        <div class="summary-grid">
+            <div class="grid-header">
+                <div>Categoria</div>
+                <div>Valor</div>
+                <div>%</div>
+            </div>
+
+            <div class="grid-body">
+                @if (Model.CreditSummaries != null && Model.CreditSummaries.Any())
+                {
+                    foreach (var item in Model.CreditSummaries)
+                    {
+                        <div class="grid-row">
+                            <div>@item.Category</div>
+                            <div>R$ @item.Amount.ToString("N2")</div>
+                            <div>@item.Percentage.ToString("N2")%</div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="grid-wrapper">
+        <label class="grid-title">Resumo de saídas</label>
+
+        <div class="summary-grid">
+            <div class="grid-header">
+                <div>Categoria</div>
+                <div>Valor</div>
+                <div>%</div>
+            </div>
+
+            <div class="grid-body">
+                @if (Model.DebitSummaries != null && Model.DebitSummaries.Any())
+                {
+                    foreach (var item in Model.DebitSummaries)
+                    {
+                        <div class="grid-row">
+                            <div>@item.Category</div>
+                            <div>R$ @item.Amount.ToString("N2")</div>
+                            <div>@item.Percentage.ToString("N2")%</div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</div>

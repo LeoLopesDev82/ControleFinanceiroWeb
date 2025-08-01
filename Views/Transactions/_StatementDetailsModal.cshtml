@@ -1,0 +1,49 @@
+﻿@model List<ControleFinanceiroWeb.Models.DTOs.ListItemDto>
+
+<div id="modal-statement-details" class="cf-modal-overlay" style="display: none;">
+    <div class="cf-modal-box statement-details-modal-box">
+        <input type="hidden" id="modal-statement-details-id" value="" />
+
+        <div class="cf-modal-header statement-details-header">
+            <span id="modal-statement-details-title">Statement Details</span>
+            <button id="modal-statement-details-close" class="modal-close-button">&times;</button>
+        </div>
+
+        <div id="modal-statement-details-tool-bar" class="statement-details-toolbar">
+            <button id="modal-statement-details-btn-save" class="statement-details-save-button">
+                <img src="~/images/save25.png" alt="Save" class="btn-icon" />
+                Save
+            </button>
+        </div>
+
+        <div id="modal-statement-details-body" class="statement-details-body">
+            <label for="statement-details-movement-date">Data Movimento</label>
+            <input type="date" id="statement-details-movement-date" />
+
+            <label for="statement-details-due-date">Data Vencimento</label>
+            <input type="date" id="statement-details-due-date" />
+
+            <label for="statement-details-history">Histórico</label>
+            <input type="text" id="statement-details-history" maxlength="255" placeholder="Digite o histórico..." />
+
+            <label for="statement-details-category">Categoria</label>
+
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <select id="statement-details-category" style="flex: 1;">
+                    <option value="">Selecione...</option>
+                    @foreach (var category in Model)
+                    {
+                        <option value="@category.Id">@category.Description</option>
+                    }
+                </select>
+
+                <button id="btn-open-category-management" type="button" style="background: transparent; border: none; cursor: pointer; padding: 0;">
+                    <img src="~/images/pluss25.png" alt="Nova categoria" class="btn-icon" />
+                </button>
+            </div>
+
+            <label for="statement-details-value">Valor</label>
+            <input type="number" id="statement-details-value" step="0.01" placeholder="0,00" />
+        </div>
+    </div>
+</div>

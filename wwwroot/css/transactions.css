@@ -1,0 +1,101 @@
+.transactions-tool-bar {
+    background-color: rgb(235, 235, 235);
+    height: 30px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0;
+    margin: 0;
+    border: none;
+    box-sizing: border-box;
+}
+
+    .transactions-tool-bar button {
+        background: none;
+        border: none;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        cursor: pointer;
+        font-size: 14px;
+        padding: 0 8px;
+    }
+
+        .transactions-tool-bar button:hover {
+            background-color: #ddd;
+        }
+
+.toolbar-separator {
+    margin: 0 5px;
+    color: #999;
+}
+
+.transactions-grid {
+    height: calc(100vh - 130px);
+    width: 100%;
+    box-sizing: border-box;
+    margin-top: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.transactions-grid-selected {
+    background-color: rgb(160, 230, 160) !important;
+}
+
+.grid-header {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    background-color: rgb(235, 235, 235);
+    font-weight: bold;
+    padding: 0;
+    height: 35px;
+    align-items: center;
+    justify-items: center;
+    border-bottom: 1px solid #ccc;
+    flex-shrink: 0;
+}
+
+.grid-body {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    display: block;
+}
+
+.grid-row {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    height: 35px;
+    padding: 0;
+    border-bottom: 1px solid #ccc;
+    box-sizing: border-box;
+}
+
+    .grid-row > div {
+        border-right: 1px solid #ccc;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        box-sizing: border-box;
+    }
+
+        .grid-row > div:last-child {
+            border-right: none;
+        }
+
+    .grid-row:nth-child(even) {
+        background-color: white;
+    }
+
+    .grid-row:nth-child(odd) {
+        background-color: rgb(220, 255, 220);
+    }
+
+    .grid-row:hover {
+        background-color: rgb(200, 240, 200);
+    }

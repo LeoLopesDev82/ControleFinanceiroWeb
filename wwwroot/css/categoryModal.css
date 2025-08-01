@@ -1,0 +1,121 @@
+#modal-category-management .category-modal-box {
+    width: 500px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    animation: fadeIn 0.2s ease-out;
+    padding: 0;
+    gap: 0;
+    max-height: 80vh;
+}
+
+#modal-category-management .category-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #2e7d32;
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+    padding: 16px 20px;
+    border-radius: 8px 8px 0 0;
+    box-shadow: inset 0 -3px 6px rgba(0, 0, 0, 0.2);
+}
+
+#modal-category-management .category-toolbar {
+    background-color: #e6f1e8;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-top: 2px solid #2e7d32;
+    padding: 0 8px;
+}
+
+    #modal-category-management .category-toolbar button {
+        background: none;
+        border: none;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        cursor: pointer;
+        font-size: 14px;
+        padding: 0 8px;
+    }
+
+        #modal-category-management .category-toolbar button:hover {
+            background-color: #ddd;
+        }
+
+#modal-category-management .category-grid {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    height: 300px;
+    overflow: hidden;
+}
+
+#modal-category-management #header-category-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    background-color: rgb(235, 235, 235);
+    font-weight: bold;
+    padding: 0;
+    height: 35px;
+    align-items: center;
+    justify-items: center;
+    border-bottom: 1px solid #ccc;
+    flex-shrink: 0;
+}
+
+#modal-category-management #body-category-grid {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    display: block;
+}
+
+#modal-category-management .grid-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    height: 35px;
+    padding: 0;
+    border-bottom: 1px solid #ccc;
+    box-sizing: border-box;
+}
+
+    #modal-category-management .grid-row > div {
+        border-right: 1px solid #ccc;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        box-sizing: border-box;
+    }
+
+        #modal-category-management .grid-row > div:last-child {
+            border-right: none;
+        }
+
+    #modal-category-management .grid-row:nth-child(even) {
+        background-color: white;
+    }
+
+    #modal-category-management .grid-row:nth-child(odd) {
+        background-color: rgb(220, 255, 220);
+    }
+
+    #modal-category-management .grid-row:hover {
+        background-color: rgb(200, 240, 200);
+    }
+
+#modal-category-management .category-grid-row-selected {
+    background-color: rgb(160, 230, 160) !important;
+}
+
+#modal-category-management .grid-row {
+    cursor: pointer;
+}
