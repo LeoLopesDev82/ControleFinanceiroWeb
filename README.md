@@ -1,5 +1,4 @@
-💰 ControleFinanceiroWeb
-ControleFinanceiroWeb is a modern web application for personal finance management, built using ASP.NET Core MVC. It is a complete web migration of a previous desktop application (Windows Forms), now featuring a responsive design, clean architecture, and full integration between front-end and back-end in a single project.
+💰 ControleFinanceiroWeb is a modern web application for personal finance management, built using ASP.NET Core MVC. It is a complete web migration of a previous desktop application (Windows Forms), now featuring a responsive design, clean architecture, and full integration between front-end and back-end in a single project.
 
 🧾 Overview
 The system allows users to manage financial statements (bank or credit card transactions), with automatic categorization based on configured keywords. It also provides summary reports, category management, and type-of-statement tracking — all with a focus on usability and maintainability.
