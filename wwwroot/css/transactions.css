@@ -99,3 +99,15 @@
     .grid-row:hover {
         background-color: rgb(200, 240, 200);
     }
+
+    .grid-row .credit-grid-row {
+        color: #1E90FF;
+    }
+
+    .grid-row .debit-grid-row {
+        color: #E74C3C;
+    }
+
+    .grid-row.repeated-transaction {
+        background-color: #ffe6ea;
+    }

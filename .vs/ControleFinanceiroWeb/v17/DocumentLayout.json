@@ -1,7 +1,20 @@
 {
   "Version": 1,
   "WorkspaceRootPath": "C:\\Users\\LeonardoL\\source\\repos\\ControleFinanceiroWeb\\",
-  "Documents": [],
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{DABB7019-33EB-423D-A015-CA40A99235E7}|ControleFinanceiroWeb.csproj|c:\\users\\leonardol\\source\\repos\\controlefinanceiroweb\\wwwroot\\js\\statementdetailsmodal.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
+      "RelativeMoniker": "D:0:0:{DABB7019-33EB-423D-A015-CA40A99235E7}|ControleFinanceiroWeb.csproj|solutionrelative:wwwroot\\js\\statementdetailsmodal.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DABB7019-33EB-423D-A015-CA40A99235E7}|ControleFinanceiroWeb.csproj|c:\\users\\leonardol\\source\\repos\\controlefinanceiroweb\\wwwroot\\css\\transactions.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
+      "RelativeMoniker": "D:0:0:{DABB7019-33EB-423D-A015-CA40A99235E7}|ControleFinanceiroWeb.csproj|solutionrelative:wwwroot\\css\\transactions.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DABB7019-33EB-423D-A015-CA40A99235E7}|ControleFinanceiroWeb.csproj|c:\\users\\leonardol\\source\\repos\\controlefinanceiroweb\\views\\transactions\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{DABB7019-33EB-423D-A015-CA40A99235E7}|ControleFinanceiroWeb.csproj|solutionrelative:views\\transactions\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    }
+  ],
   "DocumentGroupContainers": [
     {
       "Orientation": 0,
@@ -9,7 +22,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": -1,
+          "SelectedChildIndex": 6,
           "Children": [
             {
               "$type": "Bookmark",
@@ -34,6 +47,45 @@
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{34e76e81-ee4a-11d0-ae2e-00a0c90fffc3}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "statementDetailsModal.js",
+              "DocumentMoniker": "C:\\Users\\LeonardoL\\source\\repos\\ControleFinanceiroWeb\\wwwroot\\js\\statementDetailsModal.js",
+              "RelativeDocumentMoniker": "wwwroot\\js\\statementDetailsModal.js",
+              "ToolTip": "C:\\Users\\LeonardoL\\source\\repos\\ControleFinanceiroWeb\\wwwroot\\js\\statementDetailsModal.js",
+              "RelativeToolTip": "wwwroot\\js\\statementDetailsModal.js",
+              "ViewState": "AQIAAFQAAAAAAAAAAAAAAF4AAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
+              "WhenOpened": "2025-08-04T01:03:22.986Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "transactions.css",
+              "DocumentMoniker": "C:\\Users\\LeonardoL\\source\\repos\\ControleFinanceiroWeb\\wwwroot\\css\\transactions.css",
+              "RelativeDocumentMoniker": "wwwroot\\css\\transactions.css",
+              "ToolTip": "C:\\Users\\LeonardoL\\source\\repos\\ControleFinanceiroWeb\\wwwroot\\css\\transactions.css",
+              "RelativeToolTip": "wwwroot\\css\\transactions.css",
+              "ViewState": "AQIAAEgAAAAAAAAAAADwv3AAAAAFAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
+              "WhenOpened": "2025-08-04T01:02:49.896Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Index.cshtml",
+              "DocumentMoniker": "C:\\Users\\LeonardoL\\source\\repos\\ControleFinanceiroWeb\\Views\\Transactions\\Index.cshtml",
+              "RelativeDocumentMoniker": "Views\\Transactions\\Index.cshtml",
+              "ToolTip": "C:\\Users\\LeonardoL\\source\\repos\\ControleFinanceiroWeb\\Views\\Transactions\\Index.cshtml",
+              "RelativeToolTip": "Views\\Transactions\\Index.cshtml",
+              "ViewState": "AQIAAD4AAAAAAAAAAAAYwGUAAAAxAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-08-04T01:01:15.979Z",
+              "EditorCaption": ""
             }
           ]
         }

@@ -48,21 +48,53 @@
         <div>Valor</div>
     </div>
 
+    @{
+        var repeatedTransactionIds = new HashSet<int>();
+
+        if (Model.statementDtos != null && Model.statementDtos.Any())
+        {
+            var grouped = Model.statementDtos
+            .GroupBy(s => new
+            {
+                TransactionDate = s.TransactionDate?.ToString("yyyyMMdd") ?? "",
+                DueDate = s.DueDate?.ToString("yyyyMMdd") ?? "",
+                s.Description,
+                Amount = s.Amount ?? 0
+            })
+            .Where(g => g.Count() > 1);
+
+            foreach (var group in grouped)
+            {
+                foreach (var item in group)
+                {
+                    repeatedTransactionIds.Add(item.Id);
+                }
+            }
+        }
+    }
+
     <div id="dgv-transactions-body" class="grid-body">
         @if (Model.statementDtos != null && Model.statementDtos.Any())
         {
             foreach (var item in Model.statementDtos)
             {
-                <div class="grid-row" data-statement-id="@item.Id">
+                var amount = item.Amount ?? 0;
+                var isRepeated = repeatedTransactionIds.Contains(item.Id);
+                var rowClass = isRepeated ? "grid-row repeated-transaction" : "grid-row";
+
+                <div class="@rowClass" data-statement-id="@item.Id">
                     <div>@(item.TransactionDate?.ToString("dd/MM/yyyy") ?? "-")</div>
                     <div>@(item.DueDate?.ToString("dd/MM/yyyy") ?? "-")</div>
                     <div>@item.Description</div>
                     <div>@item.EntryDescription</div>
-                    <div>R$ @((item.Amount ?? 0).ToString("N2"))</div>
+                    <div class="@(amount >= 0 ? "credit-grid-row" : "debit-grid-row")">
+                        R$ @amount.ToString("N2")
+                    </div>
                 </div>
             }
         }
     </div>
+
 </div>
 
 @await Html.PartialAsync("_StatementDetailsModal", Model.Categories)

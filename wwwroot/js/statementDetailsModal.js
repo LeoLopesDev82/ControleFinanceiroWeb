@@ -26,12 +26,12 @@ function openModalStatementDetails(row) {
         hiddenId.value = row.getAttribute('data-statement-id') || '';
 
         const cells = row.querySelectorAll('div');
-       
-        movementDateInput.value = cells[0]?.textContent.trim().split('/').reverse().join('-') || '';      
+
+        movementDateInput.value = cells[0]?.textContent.trim().split('/').reverse().join('-') || '';
         dueDateInput.value = cells[1]?.textContent.trim().split('/').reverse().join('-') || '';
-        historyInput.value = cells[2]?.textContent.trim() || '';  
+        historyInput.value = cells[2]?.textContent.trim() || '';
         valueInput.value = getValueImput(cells);
-        
+
         setValueOnCategorySelect(cells);
     }
 
@@ -59,13 +59,13 @@ function setValueOnCategorySelect(cells) {
         }
     }
 
-    if (!matched) categorySelect.value = '';    
+    if (!matched) categorySelect.value = '';
 }
 
 async function saveStatementDetail() {
     const idValue = hiddenId.value?.trim();
-    const transactionDateValue = movementDateInput.value?.trim();
-    const dueDateValue = dueDateInput.value?.trim();
+    const transactionDateValue = parseNullableDateTime(movementDateInput);
+    const dueDateValue = parseNullableDateTime(dueDateInput);
     const amountValue = valueInput.value?.trim();
     const descriptionValue = historyInput.value?.trim();
     const entryIdValue = categorySelect.value?.trim();
@@ -73,8 +73,8 @@ async function saveStatementDetail() {
 
     const dto = {
         id: idValue && !isNaN(parseInt(idValue)) ? parseInt(idValue) : null,
-        transactionDate: transactionDateValue && !isNaN(Date.parse(transactionDateValue)) ? transactionDateValue : null,
-        dueDate: dueDateValue && !isNaN(Date.parse(dueDateValue)) ? dueDateValue : null,
+        transactionDate: transactionDateValue,
+        dueDate: dueDateValue,
         amount: amountValue && !isNaN(parseFloat(amountValue)) ? parseFloat(amountValue) : null,
         description: descriptionValue || null,
         entryId: entryIdValue && !isNaN(parseInt(entryIdValue)) ? parseInt(entryIdValue) : null,
@@ -86,4 +86,21 @@ async function saveStatementDetail() {
     if (result.success) {
         location.reload();
     }
+}
+
+function parseNullableDateTime(inputElement) {
+    if (!inputElement || !inputElement.value) return null;
+
+    const value = inputElement.value.trim();
+
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return null;
+
+    const [year, month, day] = value.split('-').map(n => parseInt(n, 10));
+    const date = new Date(year, month - 1, day);
+
+    if (date.getFullYear() !== year || date.getMonth() !== month - 1 || date.getDate() !== day) {
+        return null;
+    }
+
+    return value;
 }
