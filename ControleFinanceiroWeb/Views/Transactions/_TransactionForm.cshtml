@@ -1,0 +1,60 @@
+@model ControleFinanceiroWeb.Models.ViewModels.TransactionFormViewModel
+
+@{
+    var categories = ViewBag.Categories as List<ControleFinanceiroWeb.Models.ViewModels.CategoryOptionViewModel> ?? new();
+}
+
+<form id="formTransaction" novalidate>
+    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="StatementTypeId" />
+
+    <div class="row g-3">
+        @* Transaction Date *@
+        <div class="col-12 col-md-6">
+            <label asp-for="TransactionDate" class="form-label text-dark fw-semibold">Data de Movimentação <span class="text-danger">*</span></label>
+            <input type="date" asp-for="TransactionDate" class="form-control form-control-dark p-2.5" required />
+            <span asp-validation-for="TransactionDate" class="text-danger small"></span>
+        </div>
+
+        @* Due Date *@
+        <div class="col-12 col-md-6">
+            <label asp-for="DueDate" class="form-label text-dark fw-semibold">Data de Vencimento <span class="text-danger">*</span></label>
+            <input type="date" asp-for="DueDate" class="form-control form-control-dark p-2.5" required />
+            <span asp-validation-for="DueDate" class="text-danger small"></span>
+        </div>
+
+        @* Description *@
+        <div class="col-12">
+            <label asp-for="Description" class="form-label text-dark fw-semibold">Histórico / Descrição <span class="text-danger">*</span></label>
+            <input type="text" asp-for="Description" class="form-control form-control-dark p-2.5" placeholder="Ex: Combustível Posto Ipiranga, Supermercado..." required maxlength="255" />
+            <span asp-validation-for="Description" class="text-danger small"></span>
+        </div>
+
+        @* Category *@
+        <div class="col-12 col-md-6">
+            <label asp-for="CategoryId" class="form-label text-dark fw-semibold">Categoria</label>
+
+            <div class="input-group">
+                <select asp-for="CategoryId" asp-items="Model.CategoryOptions" class="form-select form-select-dark p-2.5">
+                </select>
+                <button type="button" class="btn btn-emerald px-3" onclick="openCategoryManagementModal()" title="Gerenciar Categorias">
+                    <i class="bi bi-gear-fill"></i>
+                </button>
+            </div>
+
+            <span asp-validation-for="CategoryId" class="text-danger small"></span>
+        </div>
+
+        @* Amount *@
+        <div class="col-12 col-md-6">
+            <label asp-for="Amount" class="form-label text-dark fw-semibold">Valor (Sinal negativo para Despesas) <span class="text-danger">*</span></label>
+
+            <div class="input-group">
+                <span class="input-group-text bg-light text-dark">R$</span>
+                <input type="text" asp-for="Amount" class="form-control form-control-dark p-2.5 decimal-input" placeholder="Ex: -150,00 ou 2500,00" required />
+            </div>
+
+            <span asp-validation-for="Amount" class="text-danger small"></span>
+        </div>
+    </div>
+</form>

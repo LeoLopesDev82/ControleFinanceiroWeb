@@ -1,0 +1,78 @@
+<div class="modal fade" id="modalImportTransactions" tabindex="-1" aria-hidden="true" style="z-index: 1060;">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content modal-content-glass">
+            <div class="modal-header modal-header-custom bg-light">
+                <h5 class="modal-title fw-bold text-dark d-flex align-items-center gap-2">
+                    <i class="bi bi-file-earmark-arrow-up text-success"></i> Importar Lançamentos (Copiar e Colar)
+                </h5>
+
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body p-4">
+                @* Instruction Area *@
+                <div class="alert alert-success-subtle border border-success-subtle text-dark mb-4 py-3 px-4 rounded-3 small">
+                    <h6 class="fw-bold mb-2 text-success"><i class="bi bi-info-circle-fill me-1"></i> Como funciona a importação?</h6>
+                   
+                    <ol class="mb-0 ps-3">
+                        <li>Prepare os dados no seu Excel organizando exatamente 4 colunas nesta ordem: 
+                            <strong class="text-success">Data Mov. | Data Venc. | Histórico/Descrição | Valor</strong>.
+                        </li>
+                    
+                        <li>Selecione e copie (Ctrl+C) apenas as linhas de dados (sem cabeçalhos).</li>
+                        <li>Clique na área pontilhada abaixo e aperte <strong class="text-success">Ctrl + V</strong> para colar.</li>
+                        <li>Revise a tabela de prévia gerada abaixo, altere categorias se necessário, e clique em "Salvar Importação".</li>
+                    </ol>
+                </div>
+
+                @* Paste Box Area *@
+                <div id="pasteArea" class="border border-dashed border-success rounded-4 p-4 text-center bg-light text-muted cursor-pointer mb-4" tabindex="0" style="transition: all 0.2s ease-in-out; outline: none;">
+                    <i class="bi bi-clipboard-data fs-1 text-success d-block mb-2 animate-pulse"></i>
+                    <span class="fw-bold text-dark d-block">Clique aqui e cole (Ctrl+V) os dados do Excel</span>
+                    <small class="text-muted d-block mt-1">Sua planilha deve ter as 4 colunas formatadas na ordem correta.</small>
+                    <textarea id="hiddenPasteInput" style="position: absolute; opacity: 0; width: 1px; height: 1px; left: -9999px;"></textarea>
+                </div>
+
+                @* Preview Grid Area *@
+                <div class="d-none" id="importPreviewContainer">
+                    <h6 class="fw-bold text-dark mb-3"><i class="bi bi-list-task text-success me-2"></i>Lançamentos para Importar (<span id="importItemCount">0</span>)</h6>
+                    
+                    <div class="table-responsive" style="max-height: 380px; overflow-y: auto;">
+                        <table class="table table-custom table-hover mb-0" id="tableImportPreview">
+                            <thead class="sticky-top bg-light" style="z-index: 1;">
+                                <tr>
+                                    <th style="width: 50px;">#</th>
+                                    <th>Data Mov.</th>
+                                    <th>Data Venc.</th>
+                                    <th>Histórico / Descrição</th>
+                                    <th style="width: 250px;">Categoria</th>
+                                    <th class="text-end" style="width: 130px;">Valor</th>
+                                    <th class="text-center" style="width: 80px;">Status</th>
+                                </tr>
+                            </thead>
+                    
+                            <tbody>
+                                    
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="alert alert-danger d-none mt-3 mb-0" id="importErrorMessage">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i> Existem erros nas linhas destacadas acima. Corrija na planilha do Excel e cole novamente.
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer modal-footer-custom bg-light py-2.5 px-3 d-flex justify-content-between">
+                <button type="button" class="btn btn-outline-custom" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-emerald d-none" id="btnConfirmImport" onclick="saveImportedItems()"><i class="bi bi-cloud-upload me-1"></i> Salvar Importação</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    #pasteArea:focus {
+        border-color: #198754 !important;
+        background-color: #e8f5e9 !important;
+        box-shadow: 0 0 0 0.25rem rgba(25, 135, 84, 0.25);
+    }
+</style>

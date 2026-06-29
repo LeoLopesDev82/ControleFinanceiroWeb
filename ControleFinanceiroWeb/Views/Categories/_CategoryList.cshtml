@@ -1,0 +1,71 @@
+@model List<ControleFinanceiroWeb.Models.ViewModels.CategoryListViewModel>
+
+<div class="d-flex flex-column gap-3">
+    @* Top Action and Filter Row *@
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 pb-2 border-bottom border-light">
+        <button type="button" class="btn btn-sm btn-emerald fw-bold d-flex align-items-center gap-1" onclick="openCategoryFormModal(0)">
+            <i class="bi bi-plus-lg"></i> Adicionar Categoria
+        </button>
+        
+        <div class="input-group input-group-sm" style="max-width: 280px;">
+            <span class="input-group-text bg-white border-end-0 text-muted"><i class="bi bi-search"></i></span>
+            <input type="text" class="form-control form-control-dark" placeholder="Buscar categoria..." onkeyup="filterCategoriesTable(this)">
+        </div>
+    </div>
+
+    @* Categories Grid Table *@
+    <div class="table-responsive" id="categoriesTableContainer" style="max-height: 400px; overflow-y: auto;">
+        <table class="table table-custom table-hover mb-0" id="tableCategories">
+            <thead class="sticky-top bg-light" style="z-index: 1;">
+                <tr>
+                    <th>Descrição</th>
+                    <th>Tipo</th>
+                    <th>Identificadores de Extrato</th>
+                    <th class="text-center" style="width: 100px;">Ações</th>
+                </tr>
+            </thead>
+          
+            <tbody>
+                @if (Model == null || !Model.Any())
+                {
+                    <tr>
+                        <td colspan="4" class="text-center text-muted py-4">Nenhuma categoria cadastrada.</td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var item in Model)
+                    {
+                        bool isCredit = item.EntryType == "Receita"; // Wait, in c.EntryType == 'F' ? "Fixo" : "Variável", isCredit is not needed but we can color it
+                        bool isFixed = item.EntryType == "Fixo";
+                      
+                        <tr class="align-middle">
+                            <td class="fw-bold text-dark">@item.Description</td>
+                        
+                            <td>
+                                <span class="badge @(isFixed ? "bg-success-subtle text-success border border-success-subtle" : "bg-primary-subtle text-primary border border-primary-subtle") py-1 px-2">
+                                    <i class="bi @(isFixed ? "bi-pin-angle" : "bi-lightning") me-1"></i>
+                                    @item.EntryType
+                                </span>
+                            </td>
+                            
+                            <td class="text-muted small text-truncate" style="max-width: 250px;" title="@item.StatementIdentifiers">
+                                @(string.IsNullOrWhiteSpace(item.StatementIdentifiers) ? "-" : item.StatementIdentifiers)
+                            </td>
+                            
+                            <td class="text-center">
+                                <button type="button" class="btn btn-sm btn-action-icon btn-action-edit" title="Editar categoria" onclick="openCategoryFormModal(@item.Id)">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                            
+                                <button type="button" class="btn btn-sm btn-action-icon btn-action-delete" title="Excluir categoria" onclick="deleteCategoryRow(this, @item.Id)">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

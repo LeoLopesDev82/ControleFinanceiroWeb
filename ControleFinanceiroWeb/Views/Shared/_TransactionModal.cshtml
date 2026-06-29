@@ -1,0 +1,26 @@
+@* Transaction Edit/Insert Dynamic Bootstrap Modal *@
+<div class="modal fade" id="modalTransaction" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content modal-content-glass">
+            <div class="modal-header modal-header-custom bg-light">
+                <h5 class="modal-title fw-bold text-dark d-flex align-items-center gap-2" id="modalTransactionTitle">
+                    <i class="bi bi-plus-circle text-success"></i> Incluir Movimentação
+                </h5>
+
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4" id="modalTransactionBody">
+                <div class="text-center py-4">
+                    <div class="spinner-border text-success" role="status">
+                        <span class="visually-hidden">Carregando...</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer modal-footer-custom bg-light d-flex justify-content-between">
+                <button type="button" class="btn btn-outline-custom" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-emerald" id="btnSaveTransaction"><i class="bi bi-check-lg me-1"></i> Salvar</button>
+            </div>
+        </div>
+    </div>
+</div>

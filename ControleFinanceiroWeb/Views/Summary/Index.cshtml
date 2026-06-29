@@ -1,0 +1,368 @@
+@model ControleFinanceiroWeb.Models.ViewModels.SummaryViewModel
+@{
+    ViewData["Title"] = "Resumo Financeiro";
+}
+
+<div class="sticky-header-container">
+    @* Custom Header without Notification and Status *@
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-3">
+        <div>
+            <h2 class="fw-bold mb-0 text-dark">Resumo</h2>
+            <p class="text-muted small mb-0">Visão consolidada da sua saúde financeira</p>
+        </div>
+    </div>
+
+    @* Filter Bar with only Date Filters *@
+    <div class="filter-bar d-flex flex-column flex-xl-row justify-content-between align-items-xl-center gap-3 shadow-sm">
+        <div class="d-flex flex-wrap align-items-center gap-3">
+            <div class="d-flex align-items-center gap-2">
+                <i class="bi bi-calendar3 text-success fs-5"></i>
+                <span class="fw-bold fs-6">Período:</span>
+            </div>
+            
+            <div class="d-flex align-items-center gap-2">
+                <label class="text-muted small fw-semibold">De:</label>
+                <input type="date" class="form-control form-control-dark py-1 px-2.5" id="startDate" value="@ViewBag.StartDate">
+            </div>
+            
+            <div class="d-flex align-items-center gap-2">
+                <label class="text-muted small fw-semibold">Até:</label>
+                <input type="date" class="form-control form-control-dark py-1 px-2.5" id="endDate" value="@ViewBag.EndDate">
+            </div>
+            
+            <button class="btn btn-sm btn-emerald ms-1" onclick="filterPeriod()">
+                <i class="bi bi-funnel-fill me-1"></i> Filtrar
+            </button>
+        </div>
+    </div>
+</div>
+
+@* SEGMENT 1: GENERAL SUMMARY METRICS (3 Cards) *@
+<div class="row g-3 mb-4">
+    @* Card 1: Receitas *@
+    <div class="col-12 col-md-4">
+        <div class="card-glass p-4 h-100 d-flex flex-column justify-content-between">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+                <div>
+                    <span class="text-muted fw-semibold d-block mb-1" style="font-size: 0.8rem;">Receitas</span>
+                    <h3 class="fw-bolder mb-0 text-success" style="font-size: 1.8rem; letter-spacing: -0.5px;">@Model.TotalRevenue.ToString("C")</h3>
+                </div>
+
+                <div class="rounded-3 p-2.5 d-flex align-items-center justify-content-center" style="background-color: #e6f4ea; width: 42px; height: 42px;">
+                    <i class="bi bi-arrow-down-left text-success fs-4"></i>
+                </div>
+            </div>
+
+            <div class="text-muted fs-7 pt-2 border-top border-light">
+                <span>Período selecionado</span>
+            </div>
+        </div>
+    </div>
+
+    @* Card 2: Despesas *@
+    <div class="col-12 col-md-4">
+        <div class="card-glass p-4 h-100 d-flex flex-column justify-content-between">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+                <div>
+                    <span class="text-muted fw-semibold d-block mb-1" style="font-size: 0.8rem;">Despesas</span>
+                    <h3 class="fw-bolder mb-0 text-dark" style="font-size: 1.8rem; letter-spacing: -0.5px;">@Model.TotalExpenses.ToString("C")</h3>
+                </div>
+            
+                <div class="rounded-3 p-2.5 d-flex align-items-center justify-content-center" style="background-color: #fce8e6; width: 42px; height: 42px;">
+                    <i class="bi bi-arrow-up-right text-danger fs-4"></i>
+                </div>
+            </div>
+
+            <div class="text-muted fs-7 pt-2 border-top border-light">
+                <span>Período selecionado</span>
+            </div>
+        </div>
+    </div>
+
+    @* Card 3: Saldo do Mês *@
+    <div class="col-12 col-md-4">
+        <div class="card-glass p-4 h-100 d-flex flex-column justify-content-between">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+                <div>
+                    <span class="text-muted fw-semibold d-block mb-1" style="font-size: 0.8rem;">Saldo do período</span>
+                    <h3 class="fw-bolder mb-0 @(Model.TotalBalance >= 0 ? "text-success" : "text-danger")" style="font-size: 1.8rem; letter-spacing: -0.5px;">@Model.TotalBalance.ToString("C")</h3>
+                </div>
+            
+                <div class="rounded-3 p-2.5 d-flex align-items-center justify-content-center" style="background-color: @(Model.TotalBalance >= 0 ? "#e6f4ea" : "#fce8e6"); width: 42px; height: 42px;">
+                    <i class="bi @(Model.TotalBalance >= 0 ? "bi-pie-chart text-success" : "bi-exclamation-triangle text-danger") fs-4"></i>
+                </div>
+            </div>
+            
+            <div class="text-muted fs-7 pt-2 border-top border-light">
+                <span>Consolidação de todos os extratos</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+@* SEGMENT 2: CHARTS ROW *@
+<div class="row g-4 mb-4">
+    @* Left Column: Resumo Financeiro Line Chart *@
+    <div class="col-12 col-lg-8">
+        <div class="card-glass p-4 h-100">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h5 class="fw-bold mb-1 text-dark">Resumo financeiro</h5>
+                    <small class="text-muted">Fluxo de caixa acumulado do período</small>
+                </div>
+            </div>
+           
+            <div style="height: 280px; position: relative;">
+                <canvas id="financialFlowChart" 
+                        data-labels='@Json.Serialize(Model.ChartLabels)' 
+                        data-revenues='@Json.Serialize(Model.ChartRevenues)' 
+                        data-expenses='@Json.Serialize(Model.ChartExpenses)'></canvas>
+            </div>
+        </div>
+    </div>
+
+    @* Right Column: Distribuição de Despesas Doughnut *@
+    <div class="col-12 col-lg-4">
+        <div class="card-glass p-4 h-100 d-flex flex-column justify-content-between">
+            <div>
+                <h5 class="fw-bold mb-1 text-dark">Distribuição de despesas</h5>
+                <small class="text-muted">Gastos divididos por categoria</small>
+            </div>
+            
+            <div class="my-3 d-flex justify-content-center align-items-center" style="height: 160px; position: relative;">
+                <canvas id="expensesDoughnutChart" 
+                        data-labels='@Json.Serialize(Model.ExpenseDistribution!.Select(x => x.CategoryName))' 
+                        data-values='@Json.Serialize(Model.ExpenseDistribution!.Select(x => x.TotalAmount))' 
+                        data-colors='@Json.Serialize(Model.ExpenseDistribution!.Select(x => x.ColorHex))'></canvas>
+            </div>
+
+            @* Doughnut Legend list matching calculated categories *@
+            <div class="mt-2" style="max-height: 200px; overflow-y: auto;">
+                @if (Model.ExpenseDistribution == null || !Model.ExpenseDistribution.Any())
+                {
+                    <div class="text-center text-muted small py-3">Nenhuma despesa no período.</div>
+                }
+                else
+                {
+                    @foreach (var item in Model.ExpenseDistribution)
+                    {
+                        <div class="d-flex align-items-center justify-content-between py-1 border-bottom border-light">
+                            <div class="d-flex align-items-center gap-2 small">
+                                <span class="rounded-circle" style="width: 10px; height: 10px; background-color: @item.ColorHex; display: inline-block;"></span>
+                                <span class="text-dark text-truncate" style="max-width: 120px;" title="@item.CategoryName">@item.CategoryName</span>
+                            </div>
+            
+                            <div class="text-end small">
+                                <strong class="text-dark">@item.TotalAmount.ToString("C")</strong>
+                                <span class="text-muted ms-2">@item.Percentage.ToString("F1")%</span>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@* SEGMENT 3: DETAILED INFLOW & OUTFLOW TABLES (Context from user's old print) *@
+<div class="row g-4 mb-4">
+    @* Resumo de Entradas *@
+    <div class="col-12 col-lg-6">
+        <div class="card-glass h-100 d-flex flex-column justify-content-between">
+            <div>
+                <div class="p-4 border-bottom border-light bg-light d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="fw-bold mb-1 text-dark d-flex align-items-center gap-2">
+                            <i class="bi bi-arrow-down-left-square-fill text-success"></i> Resumo de entradas
+                        </h5>
+                        <small class="text-muted">Fontes de receitas no período</small>
+                    </div>
+
+                    <div class="text-end">
+                        <span class="fs-5 fw-bold text-success">@Model.TotalRevenue.ToString("C")</span>
+                        <span class="badge bg-success ms-2">100%</span>
+                    </div>
+                </div>
+
+                <div class="p-3">
+                    <div class="table-responsive">
+                        <table class="table table-custom table-borderless table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Categoria</th>
+                                    <th class="text-end">Valor</th>
+                                    <th class="text-end">%</th>
+                                </tr>
+                            </thead>
+                    
+                            <tbody>
+                                @if (Model.InflowSummary == null || !Model.InflowSummary.Any())
+                                {
+                                    <tr>
+                                        <td colspan="3" class="text-center text-muted small py-3">Nenhuma entrada registrada no período.</td>
+                                    </tr>
+                                }
+                                else
+                                {
+                                    @foreach (var item in Model.InflowSummary)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <div class="fw-semibold text-dark">@item.CategoryName</div>
+                                                <div class="progress progress-thin mt-1"><div class="progress-bar bg-success" style="width: @item.Percentage.ToString("F2", System.Globalization.CultureInfo.InvariantCulture)%"></div></div>
+                                            </td>
+                                            <td class="text-end fw-bold text-dark">@item.TotalAmount.ToString("C")</td>
+                                            <td class="text-end"><span class="badge badge-soft-success">@item.Percentage.ToString("F2")%</span></td>
+                                        </tr>
+                                    }
+                                    <tr class="bg-light border-top">
+                                        <td class="fw-bold text-dark">Total Geral</td>
+                                        <td class="text-end fw-bold text-success">@Model.TotalRevenue.ToString("C")</td>
+                                        <td class="text-end fw-bold text-dark">100,00%</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @* Resumo de Saídas *@
+    <div class="col-12 col-lg-6">
+        <div class="card-glass h-100 d-flex flex-column justify-content-between">
+            <div>
+                <div class="p-4 border-bottom border-light bg-light d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="fw-bold mb-1 text-dark d-flex align-items-center gap-2">
+                            <i class="bi bi-arrow-up-right-square-fill text-danger"></i> Resumo de saídas
+                        </h5>
+
+                        <small class="text-muted">Destinação de gastos no período</small>
+                    </div>
+                    <div class="text-end">
+                        <span class="fs-5 fw-bold text-danger">@Model.TotalExpenses.ToString("C")</span>
+                        <span class="badge bg-danger ms-2">100%</span>
+                    </div>
+                </div>
+
+                <div class="p-3">
+                    <div class="table-responsive">
+                        <table class="table table-custom table-borderless table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Categoria</th>
+                                    <th class="text-end">Valor</th>
+                                    <th class="text-end">%</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.OutflowSummary == null || !Model.OutflowSummary.Any())
+                                {
+                                    <tr>
+                                        <td colspan="3" class="text-center text-muted small py-3">Nenhuma saída registrada no período.</td>
+                                    </tr>
+                                }
+                                else
+                                {
+                                    @foreach (var item in Model.OutflowSummary)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <div class="fw-semibold text-dark">@item.CategoryName</div>
+                                                <div class="progress progress-thin mt-1"><div class="progress-bar bg-danger" style="width: @item.Percentage.ToString("F2", System.Globalization.CultureInfo.InvariantCulture)%"></div></div>
+                                            </td>
+                                            <td class="text-end fw-bold text-dark">@item.TotalAmount.ToString("C")</td>
+                                            <td class="text-end"><span class="badge badge-soft-danger">@item.Percentage.ToString("F2")%</span></td>
+                                        </tr>
+                                    }
+                                    <tr class="bg-light border-top">
+                                        <td class="fw-bold text-dark">Total Geral</td>
+                                        <td class="text-end fw-bold text-danger">@Model.TotalExpenses.ToString("C")</td>
+                                        <td class="text-end fw-bold text-dark">100,00%</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@* MONTHLY FIXED EXPENSES CHECKLIST *@
+<h6 class="text-uppercase text-muted fw-bold mb-3 d-flex align-items-center gap-2" style="letter-spacing: 1px; font-size: 0.8rem;">
+    <i class="bi bi-pin-angle-fill text-success"></i> Controle de Gastos Fixos Recorrentes
+</h6>
+
+<div class="card-glass mb-4">
+    <div class="p-4 border-bottom border-light d-flex flex-wrap justify-content-between align-items-center gap-3 bg-light">
+        <div>
+            <h5 class="fw-bold mb-1 d-flex align-items-center gap-2 text-dark">
+                <i class="bi bi-calendar-check text-success"></i> Gastos Fixos no Período
+            </h5>
+
+            <small class="text-muted">Acompanhe as contas essenciais de pagamento obrigatório</small>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-custom table-hover">
+            <thead>
+                <tr>
+                    <th>Despesa Fixa</th>
+                    <th>Categoria</th>
+                    <th>Valor Pago</th>
+                    <th>Status Pagamento</th>
+                </tr>
+            </thead>
+            
+            <tbody>
+                @if (Model.FixedExpenses == null || !Model.FixedExpenses.Any())
+                {
+                    <tr>
+                        <td colspan="4" class="text-center text-muted small py-3">Nenhum gasto fixo registrado no período.</td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var item in Model.FixedExpenses)
+                    {
+                        <tr class="align-middle">
+                            <td class="fw-bold text-dark">@item.ExpenseName</td>
+                            <td><span class="badge bg-light text-dark border">@item.CategoryName</span></td>
+                            <td class="fw-bold fs-6">
+                                @if (item.TotalAmount > 0)
+                                {
+                                    @item.TotalAmount.ToString("C")
+                                }
+                                else
+                                {
+                                    <span class="text-muted fw-semibold">-</span>
+                                }
+                            </td>
+                            <td>
+                                @if (item.IsPaid)
+                                {
+                                    <span class="badge badge-soft-success px-2.5 py-1.5"><i class="bi bi-check-circle-fill me-1"></i> @item.StatusText</span>
+                                }
+                                else
+                                {
+                                    <span class="badge badge-soft-warning px-2.5 py-1.5"><i class="bi bi-clock me-1"></i> @item.StatusText</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@* SUMMARY ACTION MODALS REMOVED *@
+
+@section Scripts {
+    <script src="~/js/summary.js" asp-append-version="true"></script>
+}

@@ -1,0 +1,31 @@
+@* Modal Novo/Editar Tipo de Extrato (Statement Type) *@
+<div class="modal fade" id="modalNewStatementType" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content modal-content-glass">
+            <div class="modal-header modal-header-custom bg-light">
+                <h5 class="modal-title fw-bold d-flex align-items-center gap-2 text-dark">
+                    <i class="bi bi-plus-circle text-success"></i> Cadastrar Novo Tipo de Extrato
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <form id="formNewStatementType">
+                <input type="hidden" id="inputStatementTypeId" value="0" />
+            
+                <div class="modal-body p-4">
+                    <p class="text-muted mb-4 fs-7">Crie abas personalizadas para controlar suas diferentes contas bancárias, cartões ou carteiras.</p>
+                    
+                    <div class="mb-3">
+                        <label class="form-label text-dark fw-semibold">Nome da Conta / Extrato <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control form-control-dark p-2.5" id="inputStatementTypeName" placeholder="Ex: Nubank, Itaú Personalité, Carteira Crypto" required>
+                    </div>
+                </div>
+                
+                <div class="modal-footer modal-footer-custom d-flex justify-content-between bg-light">
+                    <button type="button" class="btn btn-outline-custom" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-emerald"><i class="bi bi-check-lg me-1"></i> Criar Extrato</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

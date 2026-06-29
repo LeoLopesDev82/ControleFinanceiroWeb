@@ -1,0 +1,45 @@
+@model ControleFinanceiroWeb.Models.ViewModels.CategoryFormViewModel
+
+<form id="formCategory" novalidate>
+    <input type="hidden" asp-for="Id" />
+
+    <div class="row g-3">
+        @* Entry Type *@
+        <div class="col-12">
+            <label class="form-label text-dark fw-semibold d-block">Tipo de Lançamento</label>
+
+            <div class="card p-3 border bg-light rounded-3 d-flex flex-row gap-4 align-items-center">
+                <div class="form-check mb-0">
+                    <input class="form-check-input" type="radio" asp-for="EntryType" value="F" id="entryTypeFixed" required />
+                    <label class="form-check-label fw-medium text-dark" for="entryTypeFixed">
+                        Fixo
+                    </label>
+                </div>
+            
+                <div class="form-check mb-0">
+                    <input class="form-check-input" type="radio" asp-for="EntryType" value="V" id="entryTypeVariable" required />
+                    <label class="form-check-label fw-medium text-dark" for="entryTypeVariable">
+                        Variável
+                    </label>
+                </div>
+            </div>
+           
+            <span asp-validation-for="EntryType" class="text-danger small"></span>
+        </div>
+
+        @* Description *@
+        <div class="col-12">
+            <label asp-for="Description" class="form-label text-dark fw-semibold">Descrição <span class="text-danger">*</span></label>
+            <input type="text" asp-for="Description" class="form-control form-control-dark p-2.5" placeholder="Ex: Mercado, Combustível, Salário..." required maxlength="255" />
+            <span asp-validation-for="Description" class="text-danger small"></span>
+        </div>
+
+        @* Statement Identifiers *@
+        <div class="col-12">
+            <label asp-for="StatementIdentifiers" class="form-label text-dark fw-semibold">Identificadores (Separados por |)</label>
+            <textarea asp-for="StatementIdentifiers" class="form-control form-control-dark p-2.5" rows="4" placeholder="Ex: Swift|Carrefour|Mercado..." maxlength="5000"></textarea>
+            <span asp-validation-for="StatementIdentifiers" class="text-danger small"></span>
+            <small class="text-muted d-block mt-1">Insira palavras-chave do extrato separadas por barra vertical para identificação automática do movimento.</small>
+        </div>
+    </div>
+</form>

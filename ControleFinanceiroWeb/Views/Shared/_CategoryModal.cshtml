@@ -1,0 +1,36 @@
+@* Category Management Dynamic Bootstrap Modal *@
+
+<div class="modal fade" id="modalCategoryManagement" tabindex="-1" aria-hidden="true" style="z-index: 1060;">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content modal-content-glass">
+            <div class="modal-header modal-header-custom bg-light">
+                <h5 class="modal-title fw-bold text-dark d-flex align-items-center gap-2" id="modalCategoryManagementTitle">
+                    <i class="bi bi-tags text-success"></i> Gerenciar Categorias
+                </h5>
+
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            
+            <div class="modal-body p-4" id="modalCategoryManagementBody">
+                <div class="text-center py-4">
+                    <div class="spinner-border text-success" role="status">
+                        <span class="visually-hidden">Carregando...</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="modal-footer modal-footer-custom bg-light py-2.5 px-3">
+                @* List Mode Footer *@
+                <div id="categoryModalListFooter" class="w-100 d-flex justify-content-end">
+                    <button type="button" class="btn btn-outline-custom" data-bs-dismiss="modal">Fechar</button>
+                </div>
+            
+                @* Form Mode Footer (Hidden by default) *@
+                <div id="categoryModalFormFooter" class="w-100 d-none justify-content-between">
+                    <button type="button" class="btn btn-outline-custom" onclick="showCategoryListMode()"><i class="bi bi-arrow-left me-1"></i> Voltar</button>
+                    <button type="button" class="btn btn-emerald animate-pulse" id="btnSaveCategory"><i class="bi bi-check-lg me-1"></i> Salvar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
