@@ -482,3 +482,18 @@ $RECYCLE.BIN/
 
 # Vim temporary swap files
 *.swp
+
+# ---------------------------------------------------------------
+# Projeto: Controle Financeiro Web
+# ---------------------------------------------------------------
+
+# Banco de dados Firebird.
+# O arquivo .FDB local contem dados financeiros reais e NUNCA deve
+# ser versionado. O schema fica em database/schema.sql.
+*.FDB
+*.fdb
+*.FBK
+*.fbk
+
+# User Secrets / configuracao local com credenciais
+appsettings.Local.json
