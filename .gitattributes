@@ -5,3 +5,7 @@
 # but is stored as UTF-8 so that GitHub renders the accents correctly.
 # Git converts between the two on checkout and on add.
 database/seed.sql text working-tree-encoding=ISO-8859-1
+
+# Shell scripts must keep LF: they run inside Linux containers, where a
+# CRLF shebang breaks the interpreter.
+*.sh text eol=lf
