@@ -1,0 +1,7 @@
+# Normalise line endings for text files.
+* text=auto
+
+# seed.sql must reach isql as ISO-8859-1 to match the database charset,
+# but is stored as UTF-8 so that GitHub renders the accents correctly.
+# Git converts between the two on checkout and on add.
+database/seed.sql text working-tree-encoding=ISO-8859-1
