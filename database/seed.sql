@@ -3,7 +3,8 @@
    Firebird 3.0 / SQL dialect 3 / charset ISO8859_1
 
    Fictitious household data used to demo the application.
-   Run after schema.sql. Contains no real financial records.
+   Runs after schema.sql, against a database the caller already
+   created and connected to. Contains no real financial records.
 
    Dates are relative to the current month, so the dashboard is
    always populated no matter when the database is created.
@@ -12,7 +13,6 @@
        CURRENT_DATE - EXTRACT(DAY FROM CURRENT_DATE) + N
    ============================================================ */
 
-CONNECT 'DATABASE.FDB' USER 'SYSDBA' PASSWORD 'masterkey';
 
 /* ---------------- Accounts ---------------- */
 INSERT INTO STATEMENT_TYPES (ID, DESCRIPTION) VALUES (1, 'Conta Corrente');

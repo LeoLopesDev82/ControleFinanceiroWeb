@@ -68,13 +68,35 @@ if (-not (Test-Path $projectDir)) {
     throw "Project folder not found at $projectDir."
 }
 
-# Both scripts reference DATABASE.FDB by a relative name, so they must run
-# with the project folder as the working directory.
 Push-Location $projectDir
 
 try {
+    # schema.sql carries DDL only, so the database is created here. The
+    # settings match the Docker service in docker-compose.yml.
+    Write-Host "Creating the database."
+
+    $createScript = Join-Path ([System.IO.Path]::GetTempPath()) "cfw-create-$PID.sql"
+    @"
+CREATE DATABASE 'DATABASE.FDB'
+    USER 'SYSDBA' PASSWORD 'masterkey'
+    PAGE_SIZE 8192
+    DEFAULT CHARACTER SET ISO8859_1;
+EXIT;
+"@ | Set-Content -Path $createScript -Encoding ascii
+
+    try {
+        & $isql -q -i $createScript
+
+        if ($LASTEXITCODE -ne 0) {
+            throw "Creating the database failed with exit code $LASTEXITCODE."
+        }
+    }
+    finally {
+        Remove-Item $createScript -Force -ErrorAction SilentlyContinue
+    }
+
     Write-Host "Creating the schema."
-    & $isql -q -i (Join-Path $scriptRoot 'schema.sql')
+    & $isql -q -user SYSDBA -password masterkey 'DATABASE.FDB' -i (Join-Path $scriptRoot 'schema.sql')
 
     if ($LASTEXITCODE -ne 0) {
         throw "schema.sql failed with exit code $LASTEXITCODE."
@@ -82,7 +104,7 @@ try {
 
     if (-not $NoSeed) {
         Write-Host "Loading the demo data."
-        & $isql -q -ch ISO8859_1 -i (Join-Path $scriptRoot 'seed.sql')
+        & $isql -q -ch ISO8859_1 -user SYSDBA -password masterkey 'DATABASE.FDB' -i (Join-Path $scriptRoot 'seed.sql')
 
         if ($LASTEXITCODE -ne 0) {
             throw "seed.sql failed with exit code $LASTEXITCODE."

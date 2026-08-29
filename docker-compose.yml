@@ -1,0 +1,48 @@
+# Firebird database for local development.
+#
+#   docker compose up -d
+#
+# On the first run the image creates DATABASE.FDB and applies the scripts
+# mounted into /docker-entrypoint-initdb.d, so the database comes up with the
+# schema and the demo data already in place. They run once, when the volume is
+# empty; to rebuild from scratch, drop the volume:
+#
+#   docker compose down -v && docker compose up -d
+#
+# The credentials below are for a throwaway local container and are not a
+# secret. Anything deployed for real must supply its own through
+# ConnectionStrings__DefaultConnection.
+
+services:
+  db:
+    image: firebirdsql/firebird:3.0.14
+    container_name: controlefinanceiro-db
+    restart: unless-stopped
+    environment:
+      FIREBIRD_ROOT_PASSWORD: masterkey
+      FIREBIRD_DATABASE: DATABASE.FDB
+      FIREBIRD_DATABASE_PAGE_SIZE: 8192
+      # Matches the Charset in the application connection string.
+      FIREBIRD_DATABASE_DEFAULT_CHARSET: ISO8859_1
+    # Host port is configurable: a machine with Firebird already installed
+    # has 3050 taken. Override with DB_PORT in a local .env file.
+    ports:
+      - "${DB_PORT:-3050}:3050"
+    volumes:
+      - firebird-data:/var/lib/firebird/data
+      # The SQL lives outside initdb.d so the image does not run it itself:
+      # its own handler pipes .sql files into isql with no connection charset,
+      # which mangles the ISO-8859-1 accents in seed.sql. docker-init.sh runs
+      # them with -ch ISO8859_1 instead.
+      - ./database/schema.sql:/sql/schema.sql:ro
+      - ./database/seed.sql:/sql/seed.sql:ro
+      - ./database/docker-init.sh:/docker-entrypoint-initdb.d/init.sh:ro
+    healthcheck:
+      test: ["CMD", "/opt/firebird/bin/isql", "-b", "-q", "-user", "SYSDBA", "-password", "masterkey", "/var/lib/firebird/data/DATABASE.FDB", "-i", "/dev/null"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+
+volumes:
+  firebird-data:

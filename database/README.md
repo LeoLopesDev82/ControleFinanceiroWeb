@@ -5,56 +5,99 @@ Migrations. This is a deliberate choice: it keeps full control over the DDL
 and index strategy, and it makes the schema readable without running the
 application.
 
-The `.FDB` file itself is never committed. It is generated locally from these
+The `.FDB` file itself is never committed. It is created locally from these
 scripts and ignored by git.
 
 | File | Purpose |
 | --- | --- |
-| `schema.sql` | Creates the database and its three tables |
-| `seed.sql` | Loads fictitious demo data |
-| `setup.ps1` | Runs both of the above |
+| `schema.sql` | DDL for the three tables |
+| `seed.sql` | Fictitious demo data |
+| `docker-init.sh` | Applies both inside the container |
+| `setup.ps1` | Applies both against a local Firebird install |
 
-## Requirements
+Neither SQL file creates the database — that is the caller's job, so the same
+scripts serve the container and a local install alike.
 
-[Firebird 3.0](https://firebirdsql.org/en/firebird-3-0/) installed, with the
-service running. The scripts use `isql`, which ships with it.
-
-## Setup
+## With Docker (recommended)
 
 From the repository root:
 
-```powershell
-.\database\setup.ps1
+```bash
+docker compose up -d
 ```
 
-This creates `ControleFinanceiroWeb\DATABASE.FDB` and loads the demo data.
-Then run the application:
+The image creates `DATABASE.FDB` and applies the scripts on first start, so
+the database comes up with the schema and demo data already loaded. Then:
 
 ```bash
 dotnet run --project ControleFinanceiroWeb
 ```
 
-The script refuses to touch an existing database. Pass `-Force` to replace
-one, and `-NoSeed` to create an empty schema:
+To rebuild the database from scratch, drop the volume:
+
+```bash
+docker compose down -v && docker compose up -d
+```
+
+### If port 3050 is taken
+
+A machine with Firebird already installed is using 3050. Put an override in a
+`.env` file at the repository root (it is gitignored):
+
+```
+DB_PORT=3051
+```
+
+and point the application at the same port without editing a tracked file:
+
+```bash
+dotnet user-secrets set "ConnectionStrings:DefaultConnection" "User=SYSDBA;Password=masterkey;Database=/var/lib/firebird/data/DATABASE.FDB;DataSource=localhost;Port=3051;Dialect=3;Charset=ISO8859_1;" --project ControleFinanceiroWeb
+```
+
+User secrets live in the user profile, never in the repository.
+
+## Without Docker
+
+Requires [Firebird 3.0](https://firebirdsql.org/en/firebird-3-0/) installed,
+with the service running. From the repository root:
+
+```powershell
+.\database\setup.ps1
+```
+
+This creates `ControleFinanceiroWeb\DATABASE.FDB` and loads the demo data. The
+script refuses to touch an existing database; pass `-Force` to replace one and
+`-NoSeed` to create an empty schema:
 
 ```powershell
 .\database\setup.ps1 -Force -NoSeed
 ```
 
-## Running the scripts by hand
-
-`isql` resolves the relative database name against its working directory, so
-run it from the web project folder:
+Point the application at that file:
 
 ```bash
-cd ControleFinanceiroWeb
-isql -q -i ../database/schema.sql
-isql -q -ch ISO8859_1 -i ../database/seed.sql
+dotnet user-secrets set "ConnectionStrings:DefaultConnection" "User=SYSDBA;Password=masterkey;Database=DATABASE.FDB;DataSource=localhost;Port=3050;Dialect=3;Charset=ISO8859_1;" --project ControleFinanceiroWeb
 ```
 
-The `-ch ISO8859_1` flag matters: `seed.sql` is encoded in ISO-8859-1 to match
-the database charset, and the accented category names are stored wrong
-without it.
+A relative `Database=DATABASE.FDB` is resolved against the content root, so no
+absolute path needs editing.
+
+## A note on charset
+
+The database uses ISO8859_1, and `seed.sql` is encoded to match, since `isql`
+sends file bytes to the server as they are.
+
+That creates two wrinkles, both handled:
+
+- **In git**, the file would show up as mojibake when browsing the repository.
+  A `working-tree-encoding=ISO-8859-1` attribute in `.gitattributes` stores it
+  as UTF-8 and converts on checkout.
+- **In the container**, the image's own `.sql` handling pipes files into
+  `isql` without a connection charset. Under the container's `C.UTF-8` locale
+  the ISO-8859-1 bytes are read as UTF-8 lead bytes and the accented category
+  names are swallowed. `docker-init.sh` runs `isql -ch ISO8859_1` explicitly
+  instead, which is why the SQL is mounted to `/sql` rather than to
+  `/docker-entrypoint-initdb.d`.
 
 ## Demo data
 
@@ -69,24 +112,23 @@ CURRENT_DATE - EXTRACT(DAY FROM CURRENT_DATE) + N   -- day N of this month
 
 so the dashboard is populated whenever the database happens to be created.
 Three transactions are left uncategorised on purpose, to demonstrate the
-keyword matching on the *Identificar* action.
+keyword matching behind the *Identificar* action.
 
 Categories and accounts are inserted with explicit primary keys, which does
-not advance Firebird's identity generators. The script restarts them at 100
-so that rows created through the application do not collide with the seeded
-keys.
+not advance Firebird's identity generators. The script restarts them at 100 so
+that rows created through the application do not collide with the seeded keys.
 
 ## Schema
 
-Three tables, no foreign keys — referential integrity is currently enforced
-by the application layer. `schema.sql` ends with the constraint and index
+Three tables, no foreign keys — referential integrity is currently enforced by
+the application layer. `schema.sql` ends with the constraint and index
 statements written out but not applied, so the script stays faithful to the
 running database; enabling them requires clearing orphan rows first.
 
-- **CATEGORY** — spending and income categories. `STATEMENT_IDENTIFIERS`
-  holds pipe-separated keywords (`SUPERMERCADO|PADARIA`) matched against a
-  transaction description. `ENTRY_TYPE` is `F` for a fixed monthly cost or
-  `V` for a variable one.
+- **CATEGORY** — spending and income categories. `STATEMENT_IDENTIFIERS` holds
+  pipe-separated keywords (`SUPERMERCADO|PADARIA`) matched against a
+  transaction description. `ENTRY_TYPE` is `F` for a fixed monthly cost or `V`
+  for a variable one.
 - **STATEMENT_TYPES** — accounts a transaction belongs to. Account `0` is the
   built-in *Extrato* view and has no row here.
 - **STATEMENT** — the transactions. A positive `AMOUNT` is income, a negative
@@ -96,12 +138,12 @@ running database; enabling them requires clearing orphan rows first.
 ## Connection string
 
 `appsettings.json` carries no credentials. Local development reads the
-connection string from `appsettings.Development.json`; anywhere else it must
-come from the environment:
+connection string from `appsettings.Development.json` (pointing at the Docker
+service) or from user secrets; anywhere else it must come from the
+environment:
 
 ```bash
-ConnectionStrings__DefaultConnection="User=SYSDBA;Password=...;Database=/path/DATABASE.FDB;DataSource=localhost;Port=3050;Dialect=3;Charset=ISO8859_1;"
+ConnectionStrings__DefaultConnection="User=SYSDBA;Password=...;Database=...;DataSource=...;Port=3050;Dialect=3;Charset=ISO8859_1;"
 ```
 
-A relative `Database=DATABASE.FDB` is resolved against the content root, so a
-fresh clone runs without editing an absolute path.
+The application fails at startup with an explicit message when it is missing.
