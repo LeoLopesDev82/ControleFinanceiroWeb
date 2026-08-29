@@ -9,7 +9,23 @@ using ControleFinanceiroWeb.Services.Summary;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? "";
+// The connection string lives in appsettings.Development.json for local runs.
+// Outside development it must be supplied by the environment, so that no
+// credential is ever committed to the repository:
+//   ConnectionStrings__DefaultConnection="User=...;Password=...;Database=..."
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+if (string.IsNullOrWhiteSpace(connectionString))
+{
+    throw new InvalidOperationException(
+        "Connection string 'DefaultConnection' was not found. Set it in " +
+        "appsettings.Development.json for local development, or through the " +
+        "ConnectionStrings__DefaultConnection environment variable. " +
+        "See database/README.md for the database setup.");
+}
+
+// A relative database name is resolved against the content root, so the app
+// runs from a clone without anyone editing an absolute path.
 if (connectionString.Contains("Database=DATABASE.FDB"))
 {
     var absoluteDbPath = Path.Combine(builder.Environment.ContentRootPath, "DATABASE.FDB");
