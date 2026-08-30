@@ -17,6 +17,16 @@ class BaseFetch {
             options.body = JSON.stringify(options.body);
         }
 
+        const method = (options.method || 'GET').toUpperCase();
+
+        if (method !== 'GET' && method !== 'HEAD') {
+            const token = document.querySelector('input[name="__RequestVerificationToken"]');
+
+            if (token) {
+                defaults.headers['RequestVerificationToken'] = token.value;
+            }
+        }
+
         const mergedHeaders = { ...defaults.headers, ...options.headers };
         const mergedOptions = { ...defaults, ...options, headers: mergedHeaders };
 

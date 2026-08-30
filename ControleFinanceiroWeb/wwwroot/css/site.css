@@ -548,3 +548,102 @@ body {
 .delete-statement-btn:hover {
   color: #ef4444 !important;
 }
+/* Pin access screens */
+.pin-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  background: linear-gradient(160deg, #0f5132 0%, #198754 100%);
+}
+
+.pin-card {
+  width: 100%;
+  max-width: 380px;
+  background: #fff;
+  border-radius: 1.25rem;
+  padding: 2.25rem 2rem;
+  box-shadow: 0 1.5rem 3rem rgba(0, 0, 0, 0.25);
+}
+
+.pin-brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  color: #0f5132;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  margin-bottom: 1.5rem;
+}
+
+.pin-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  margin: 0 auto 1rem;
+  border-radius: 50%;
+  background: #d1e7dd;
+  color: #0f5132;
+  font-size: 1.5rem;
+}
+
+.pin-title {
+  font-size: 1.35rem;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 0.25rem;
+}
+
+.pin-subtitle {
+  text-align: center;
+  color: #6c757d;
+  font-size: 0.875rem;
+  margin-bottom: 1.5rem;
+}
+
+.pin-input {
+  text-align: center;
+  font-size: 1.5rem;
+  letter-spacing: 0.6rem;
+  padding: 0.65rem 0.5rem;
+  border-radius: 0.75rem;
+}
+
+.pin-input:focus {
+  border-color: #198754;
+  box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.2);
+}
+
+.btn-pin {
+  background: #198754;
+  border-color: #198754;
+  color: #fff;
+  font-weight: 600;
+  border-radius: 0.75rem;
+  padding: 0.6rem;
+}
+
+.btn-pin:hover,
+.btn-pin:focus {
+  background: #0f5132;
+  border-color: #0f5132;
+  color: #fff;
+}
+
+.pin-note {
+  margin-top: 1.25rem;
+  margin-bottom: 0;
+  text-align: center;
+  color: #6c757d;
+  font-size: 0.75rem;
+}
+
+.sidebar-logout {
+  margin-top: auto;
+  padding: 0.75rem 0 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+}

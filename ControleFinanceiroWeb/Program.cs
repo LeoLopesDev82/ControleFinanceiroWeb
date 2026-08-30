@@ -5,6 +5,11 @@ using ControleFinanceiroWeb.Services.Transactions;
 using ControleFinanceiroWeb.Services.Categories;
 using ControleFinanceiroWeb.Services.StatementType;
 using ControleFinanceiroWeb.Services.Summary;
+using ControleFinanceiroWeb.Services.Security;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -40,6 +45,24 @@ builder.Services.AddScoped<ITransactionService, TransactionService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<ICategoryIdentificationService, CategoryIdentificationService>();
 builder.Services.AddScoped<ISummaryService, SummaryService>();
+builder.Services.AddScoped<ISecurityService, SecurityService>();
+builder.Services.AddSingleton<IPinLockout, PinLockout>();
+
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Account/Login";
+        options.LogoutPath = "/Account/Logout";
+        options.AccessDeniedPath = "/Account/Denied";
+        options.ExpireTimeSpan = TimeSpan.FromDays(60);
+        options.SlidingExpiration = true;
+        options.Cookie.Name = "ControleFinanceiro.Auth";
+        options.Cookie.HttpOnly = true;
+        options.Cookie.SameSite = SameSiteMode.Lax;
+        options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+    });
+
+builder.Services.AddAntiforgery(options => options.HeaderName = "RequestVerificationToken");
 
 builder.Services.AddControllersWithViews(options =>
 {
@@ -48,6 +71,14 @@ builder.Services.AddControllersWithViews(options =>
         NoStore = true,
         Location = Microsoft.AspNetCore.Mvc.ResponseCacheLocation.None
     });
+
+    options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
+
+    var policy = new AuthorizationPolicyBuilder()
+        .RequireAuthenticatedUser()
+        .Build();
+
+    options.Filters.Add(new AuthorizeFilter(policy));
 });
 
 var app = builder.Build();
@@ -62,6 +93,7 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapStaticAssets();

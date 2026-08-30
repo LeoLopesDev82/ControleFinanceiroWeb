@@ -1,0 +1,44 @@
+@model ControleFinanceiroWeb.Models.ViewModels.PinLoginViewModel
+@{
+    Layout = "_PinLayout";
+    ViewData["Title"] = "Acesso";
+}
+
+<div class="pin-icon">
+    <i class="bi bi-shield-lock"></i>
+</div>
+
+<h1 class="pin-title">Acesso</h1>
+<p class="pin-subtitle">Digite o PIN de 6 dígitos para entrar</p>
+
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <div class="alert alert-danger py-2 px-3 text-center" role="alert">
+        @Model.ErrorMessage
+    </div>
+}
+
+<form asp-action="Login" method="post" autocomplete="off">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="ReturnUrl" />
+
+    <input asp-for="Pin"
+           class="form-control pin-input"
+           type="password"
+           inputmode="numeric"
+           pattern="[0-9]*"
+           maxlength="6"
+           autocomplete="off"
+           autofocus
+           aria-label="PIN de acesso" />
+
+    <span asp-validation-for="Pin" class="text-danger d-block text-center mt-2 small"></span>
+
+    <button type="submit" class="btn btn-pin w-100 mt-3">
+        <i class="bi bi-box-arrow-in-right me-1"></i> Entrar
+    </button>
+</form>
+
+@section Scripts {
+    <script src="~/js/pin.js" asp-append-version="true"></script>
+}

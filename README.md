@@ -35,6 +35,12 @@ out of a spreadsheet.
 - Manage statement types (chequing account, credit card, …)
 - Deletion blocked while transactions still reference them
 
+**Access**
+- Shared 6-digit PIN, set by whoever opens the application for the first time
+- Stored as a PBKDF2 hash, never in clear text
+- Five wrong attempts lock further tries for five minutes
+- Persistent cookie, so each device is asked once and not again
+
 **Dashboard**
 - Income, expenses and balance for the selected period
 - Accumulated cash-flow chart and expense distribution by category
@@ -119,8 +125,7 @@ A few decisions worth calling out:
 
 Known gaps, in the order they are worth closing:
 
-- [ ] Cookie authentication — the application currently has none
-- [ ] Antiforgery tokens on the write endpoints
+- [ ] A screen to change the PIN; today it is set once on first access
 - [ ] Structured logging; several `catch` blocks still swallow the exception
 - [ ] Service-level tests against an in-memory provider
 - [ ] Fix horizontal overflow on narrow screens

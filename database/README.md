@@ -10,7 +10,7 @@ scripts and ignored by git.
 
 | File | Purpose |
 | --- | --- |
-| `schema.sql` | DDL for the three tables |
+| `schema.sql` | DDL for the four tables |
 | `seed.sql` | Fictitious demo data |
 | `docker-init.sh` | Applies both inside the container |
 | `setup.ps1` | Applies both against a local Firebird install |
@@ -30,7 +30,7 @@ The image creates `DATABASE.FDB` and applies the scripts on first start, so
 the database comes up with the schema and demo data already loaded. Then:
 
 ```bash
-dotnet run --project ControleFinanceiroWeb
+dotnet run --project ControleFinanceiroWeb --launch-profile "Docker database"
 ```
 
 To rebuild the database from scratch, drop the volume:
@@ -73,14 +73,15 @@ script refuses to touch an existing database; pass `-Force` to replace one and
 .\database\setup.ps1 -Force -NoSeed
 ```
 
-Point the application at that file:
+Then run it with either default profile:
 
 ```bash
-dotnet user-secrets set "ConnectionStrings:DefaultConnection" "User=SYSDBA;Password=masterkey;Database=DATABASE.FDB;DataSource=localhost;Port=3050;Dialect=3;Charset=ISO8859_1;" --project ControleFinanceiroWeb
+dotnet run --project ControleFinanceiroWeb
 ```
 
-A relative `Database=DATABASE.FDB` is resolved against the content root, so no
-absolute path needs editing.
+That is what `appsettings.Development.json` already points at: a relative
+`Database=DATABASE.FDB`, resolved against the content root, so no absolute
+path needs editing.
 
 ## A note on charset
 
@@ -120,7 +121,7 @@ that rows created through the application do not collide with the seeded keys.
 
 ## Schema
 
-Three tables, no foreign keys — referential integrity is currently enforced by
+Four tables, no foreign keys — referential integrity is currently enforced by
 the application layer. `schema.sql` ends with the constraint and index
 statements written out but not applied, so the script stays faithful to the
 running database; enabling them requires clearing orphan rows first.
@@ -134,16 +135,36 @@ running database; enabling them requires clearing orphan rows first.
 - **STATEMENT** — the transactions. A positive `AMOUNT` is income, a negative
   one an expense. `ENTRY_ID` references `CATEGORY.ID` and is null while a
   transaction is uncategorised.
+- **APP_SECURITY** — a single row holding the hash of the shared access PIN.
 
 ## Connection string
 
-`appsettings.json` carries no credentials. Local development reads the
-connection string from `appsettings.Development.json` (pointing at the Docker
-service) or from user secrets; anywhere else it must come from the
-environment:
+`appsettings.json` carries no credentials. `appsettings.Development.json`
+points at a local Firebird install, which is what the default launch profiles
+use; the `Docker database` profile overrides it with the container's path.
+Anywhere else it must come from the environment:
 
 ```bash
 ConnectionStrings__DefaultConnection="User=SYSDBA;Password=...;Database=...;DataSource=...;Port=3050;Dialect=3;Charset=ISO8859_1;"
 ```
 
 The application fails at startup with an explicit message when it is missing.
+
+## Access PIN
+
+`APP_SECURITY` holds a single row with the PBKDF2 hash of the shared access
+PIN. It is written the first time the application is opened; an empty table is
+what triggers the first-access setup screen.
+
+To force the setup screen again — after forgetting the PIN, for instance —
+clear the table and restart the application:
+
+```sql
+DELETE FROM APP_SECURITY;
+COMMIT;
+```
+
+The lockout that follows five wrong attempts is held in memory, not in the
+database, so restarting the application clears it. That is a deliberate
+simplification for a single-instance deployment; a multi-instance one would
+need it persisted or moved to a distributed cache.

@@ -14,6 +14,8 @@ namespace ControleFinanceiroWeb.Data
         public DbSet<StatementTypes> StatementTypes { get; set; }
         public DbSet<Category> Categories { get; set; }
 
+        public DbSet<AppSecurity> AppSecurity { get; set; }
+
         // Configures model relationships and dynamically registers all entity classes from the Entities namespace.
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
