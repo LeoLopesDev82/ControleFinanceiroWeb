@@ -1,72 +1,130 @@
-💰 ControleFinanceiroWeb is a modern web application for personal finance management, built using ASP.NET Core MVC. It is a complete web migration of a previous desktop application (Windows Forms), now featuring a responsive design, clean architecture, full integration between front-end and back-end in a single project, and robust automated tests.
+# 💰 ControleFinanceiroWeb
 
-🧾 Overview
-The system allows users to manage financial statements (bank or credit card transactions) with automatic categorization based on configured keywords. It also provides summary reports, category management, account statement tracking, and asynchronous database flows designed for high performance.
+A personal finance web application built with ASP.NET Core MVC, used daily to
+run a household's budget. It is a full web rewrite of an earlier Windows Forms
+application, now responsive and reachable from any device on the home network.
 
-✅ Features
-💼 Statement Management
-- Add transactions manually or import from spreadsheets via tab-delimited clipboard copy-paste.
-- Filter by dynamic monthly date ranges (automatically defaults to the current month).
-- Automatically categorize entries using keyword matching.
+> Screenshots: replace the two files under `docs/` with your own captures.
 
-🏷️ Category Management
-- Full CRUD for categories (e.g., Utilities, Entertainment, Food).
-- Configure identifiers (keywords) to help auto-categorize entries.
-- Prevent duplicate entries by name validation.
-- Strongly-typed category entry types (Fixed vs. Variable).
+![Dashboard](docs/screenshot-dashboard.png)
 
-📂 Statement Type Management
-- Manage types of accounts/statements (e.g., Checking Account, Credit Card).
-- Prevent deletion when linked to existing data.
+## 🧾 Overview
 
-📊 Reporting
-- View financial summaries grouped by category and date.
-- Quickly identify uncategorized entries for manual correction.
+The application tracks bank and credit card transactions across several
+accounts, categorises them automatically from configurable keywords, and
+consolidates everything into a dashboard with charts, category breakdowns and
+a fixed-expense checklist.
 
-⚡ Performance & Best Practices
-- **Asynchronous Execution**: Fully migrated I/O-bound database operations to `async/await` patterns to maximize thread pool efficiency and prevent resource starvation.
-- **Strongly-typed Enums**: Replaced raw magic characters ('F'/'V') for category types with a compiled `CategoryType` enum, mapped via EF Core Value Converters.
-- **Dynamic Filtering**: Date ranges now compute dynamically based on the current system time, keeping the dashboard populated by default.
-- **Automated Unit Testing**: Includes a dedicated xUnit test suite covering business algorithms, input parsing, and model validation.
+Transactions are entered by hand or imported in bulk by pasting rows straight
+out of a spreadsheet.
 
-🛠️ Tech Stack
-- **Backend**: ASP.NET Core MVC (net9.0), C#, LINQ, Entity Framework Core 9.
-- **Testing**: xUnit, FluentAssertions, .NET Test SDK.
-- **Frontend**: HTML5, CSS3 (Bootstrap 5, Bootstrap Icons), Vanilla JavaScript (fetch-based asynchronous API calls).
-- **Database**: Firebird 3.0 (.FDB local file).
+## ✅ Features
 
-🌐 Modern UI
-The user interface is minimalist and responsive, featuring:
-- Green as the primary theme color 💚
-- Rounded elements for a modern look.
-- Clean JavaScript fetch-based form submissions.
-- Interactive charts rendered dynamically with Chart.js.
+**Transactions**
+- Add manually, or import in bulk by pasting tab-delimited rows from a
+  spreadsheet, with a validated preview before anything is saved
+- Filter by account and date range, defaulting to the current month
+- Automatic categorisation by keyword matching on the description
 
-🧪 Testing
-The project includes a comprehensive suite of unit tests verifying critical components. To run the tests, execute:
+**Categories**
+- Full CRUD, with duplicate-name validation
+- Keyword identifiers per category (`SUPERMERCADO|PADARIA` → *Alimentação*)
+- Typed as fixed or variable cost, which drives the dashboard checklist
+
+**Accounts**
+- Manage statement types (chequing account, credit card, …)
+- Deletion blocked while transactions still reference them
+
+**Dashboard**
+- Income, expenses and balance for the selected period
+- Accumulated cash-flow chart and expense distribution by category
+- Fixed-expense checklist showing what is paid and what is still pending
+- Uncategorised transactions surfaced for manual correction
+
+## 🛠️ Tech Stack
+
+| Layer | Choice |
+| --- | --- |
+| Backend | ASP.NET Core MVC (net9.0), C#, LINQ, EF Core 9 |
+| Database | Firebird 3.0 |
+| Frontend | Razor views, Bootstrap 5, vanilla JavaScript (`fetch`), Chart.js |
+| Testing | xUnit |
+| Local infra | Docker Compose |
+
+## 🚀 Getting Started
+
+Requires the [.NET 9 SDK](https://dotnet.microsoft.com/download) and
+[Docker](https://www.docker.com/products/docker-desktop/).
+
+```bash
+git clone https://github.com/LeoLopesDev82/ControleFinanceiroWeb.git
+cd ControleFinanceiroWeb
+docker compose up -d
+dotnet run --project ControleFinanceiroWeb
+```
+
+The container brings up Firebird with the schema and demo data already
+applied, so there is nothing to install or configure. The demo data is
+fictitious and dated relative to the current month, so the dashboard is
+populated on first open.
+
+Prefer a local Firebird install, or port 3050 already taken? See
+[`database/README.md`](database/README.md).
+
+## 🧪 Tests
+
 ```bash
 dotnet test
 ```
-The test suite covers:
-- **Business Logic**: Automatically matching category keyword configurations against transaction descriptions.
-- **Sanitization Helpers**: Clean parsing of currency inputs (Brazilian Real `R$ 1.500,50` -> `1500.50m`), integer parsing, and date conversions.
-- **Data Validation**: ViewModel annotations (`[Required]`, `[MaxLength]`) tested to prevent corrupted entries.
 
-🚀 Getting Started
-1. Install Firebird 3.0 on your machine.
-2. Clone this repository and open it with Visual Studio 2022+ or Rider.
-3. Make sure the Firebird service is running before launching the app.
-4. Run the project (F5) and access it via your browser. 
-*(The application connection string dynamically maps the relative path of the local `DATABASE.FDB` file, so no hardcoded absolute path edits are required in development)*
+Covers the keyword-matching algorithm behind automatic categorisation, the
+parsing helpers for Brazilian currency and date formats (`R$ 1.500,50` →
+`1500.50m`), and the data-annotation validation on the view models.
 
-🎯 Why This Project?
-This project showcases:
-- Full-stack ASP.NET Core MVC development.
-- Clean separation of concerns using a service-based architecture.
-- Thread-safe asynchronous database access.
-- High developer experience (DX) with self-resolving database paths and dynamic date defaults.
-- Reliable C# unit testing.
-- Efficient front-end and back-end communication using modern JavaScript fetch APIs.
+## 🏗️ Architecture
 
-📄 License
-This project is open source under the MIT License.
+```
+Controllers/   Thin HTTP layer: model binding, delegation, status codes
+Services/      Business logic, one folder per domain, interface per service
+Models/
+  Entities/    EF Core entities mapped to the Firebird tables
+  ViewModels/  Shapes for views and JSON endpoints
+  ServiceResult Uniform success/message/id result returned by services
+Data/          EF Core DbContext
+Helpers/       Conversion and validation utilities
+Views/         Razor views and partials
+wwwroot/js/    Fetch-based client code, one file per screen
+database/      Versioned SQL schema, demo data and setup scripts
+```
+
+A few decisions worth calling out:
+
+- **Services return `ServiceResult`, not exceptions**, so controllers stay
+  free of try/catch and map results to status codes in one line.
+- **The schema is versioned as SQL, not EF Migrations.** A deliberate choice
+  to keep control over the DDL and index strategy, and to keep the schema
+  readable without running the application.
+- **The database file is never committed.** It is generated from
+  `database/schema.sql`, and `.gitignore` blocks `*.fdb` so that real
+  financial data cannot be pushed by accident.
+- **`appsettings.json` carries no credentials.** The connection string comes
+  from `appsettings.Development.json`, user secrets, or the environment, and
+  the application fails at startup with an explicit message when it is
+  missing.
+- **Entry types are a typed enum**, mapped to the underlying `CHAR(1)` through
+  an EF Core value converter rather than passing `'F'`/`'V'` around.
+- **All database access is asynchronous**, end to end.
+
+## 🗺️ Roadmap
+
+Known gaps, in the order they are worth closing:
+
+- [ ] Cookie authentication — the application currently has none
+- [ ] Antiforgery tokens on the write endpoints
+- [ ] Structured logging; several `catch` blocks still swallow the exception
+- [ ] Service-level tests against an in-memory provider
+- [ ] Fix horizontal overflow on narrow screens
+
+## 📄 License
+
+[MIT](LICENSE)
