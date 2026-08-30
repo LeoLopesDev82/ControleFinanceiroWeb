@@ -658,3 +658,31 @@ body {
 .delete-statement-btn-active {
   color: rgba(0, 0, 0, 0.4);
 }
+
+/* Narrow screens
+   A flex item defaults to min-width: auto, which stops it shrinking below the
+   intrinsic width of its content. That default let a long footer line and the
+   wide tables push .main-content past the viewport, so the whole page scrolled
+   sideways on a phone. Allowing these containers to shrink lets the text wrap
+   and confines wide content to its own scroll area. */
+.main-content,
+.main-content main,
+.app-container {
+  min-width: 0;
+}
+
+.main-content .d-flex {
+  min-width: 0;
+}
+
+.main-content .table-responsive {
+  max-width: 100%;
+}
+
+@media (max-width: 991.98px) {
+  .app-container > .main-content > footer .d-flex {
+    flex-wrap: wrap;
+    text-align: center;
+    justify-content: center;
+  }
+}

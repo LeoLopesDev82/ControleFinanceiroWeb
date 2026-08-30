@@ -127,7 +127,6 @@ Known gaps, in the order they are worth closing:
 
 - [ ] A screen to change the PIN; today it is set once on first access
 - [ ] Service-level tests against an in-memory provider
-- [ ] Fix horizontal overflow on narrow screens
 
 ## 📄 License
 
