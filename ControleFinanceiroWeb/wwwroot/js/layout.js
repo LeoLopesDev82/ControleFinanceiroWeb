@@ -212,3 +212,18 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 //#endregion
+/**
+ * Binds the delete buttons rendered by the sidebar view component.
+ * The identifier and name travel in data attributes, which Razor encodes,
+ * instead of being interpolated into an inline onclick handler.
+ */
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.delete-statement-btn').forEach(button => {
+        button.addEventListener('click', event => {
+            const id = parseInt(button.dataset.statementId, 10);
+            const name = button.dataset.statementName || '';
+
+            deleteCustomStatementType(event, id, name);
+        });
+    });
+});

@@ -1,0 +1,60 @@
+@model ControleFinanceiroWeb.Models.ViewModels.SidebarViewModel
+
+<aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+        <a class="sidebar-brand d-flex align-items-center gap-2" asp-controller="Summary" asp-action="Index">
+            <div class="bg-white p-2 rounded-3 d-flex align-items-center justify-content-center shadow-sm" style="width: 38px; height: 38px;">
+                <i class="bi bi-wallet2 text-success fs-5"></i>
+            </div>
+            <div>
+                <span class="fs-5 fw-bold text-white d-block lh-1">FinanControl</span>
+                <small class="text-white-50" style="font-size: 0.65rem; font-weight: 500; letter-spacing: 0.5px;">CONTROLE FINANCEIRO</small>
+            </div>
+        </a>
+    </div>
+
+    <ul class="sidebar-menu" id="sidebarMenu">
+        <li class="sidebar-item">
+            <a class="sidebar-link @(Model.IsSummaryActive ? "active" : "")" asp-controller="Summary" asp-action="Index">
+                <i class="bi bi-bar-chart-line-fill text-white-50"></i> Resumo Geral
+            </a>
+        </li>
+
+        <li class="sidebar-item text-white-50 px-3 mt-4 mb-2 small text-uppercase" style="font-size: 0.72rem; letter-spacing: 0.5px; font-weight: 600;">Extratos / Contas</li>
+
+        <li class="sidebar-item statement-dynamic-item position-relative">
+            <a class="sidebar-link @(Model.IsExtratoActive ? "active" : "")" href="/Transactions/Index?statementType=Extrato&statementTypeId=0" style="padding-right: 2.5rem;">
+                <i class="bi bi-file-earmark-text text-white-50"></i> Extrato
+            </a>
+        </li>
+
+        @foreach (var statement in Model.Statements)
+        {
+            <li class="sidebar-item statement-dynamic-item position-relative">
+                <a class="sidebar-link @(statement.IsActive ? "active" : "")" href="/Transactions/Index?statementType=@(Uri.EscapeDataString(statement.Name))&statementTypeId=@statement.Id" style="padding-right: 2.5rem;">
+                    <i class="bi bi-credit-card text-white-50"></i> @statement.Name
+                </a>
+
+                <button class="btn btn-sm border-0 p-1 position-absolute end-0 top-50 translate-middle-y me-2 delete-statement-btn @(statement.IsActive ? "delete-statement-btn-active" : "")"
+                        type="button"
+                        data-statement-id="@statement.Id"
+                        data-statement-name="@statement.Name"
+                        title="Excluir Extrato">
+                    <i class="bi bi-x-lg" style="font-size: 0.75rem;"></i>
+                </button>
+            </li>
+        }
+
+        <li class="sidebar-item px-2 mt-3" id="btnAddExtratoContainer">
+            <button class="btn btn-add-extrato" type="button" onclick="openStatementTypeModal(0, '')" title="Cadastrar novo extrato">
+                <i class="bi bi-plus-lg"></i> Novo Extrato
+            </button>
+        </li>
+    </ul>
+
+    <div class="sidebar-logout">
+        <button type="button" class="sidebar-link border-0 bg-transparent w-100 text-start" onclick="document.getElementById('logoutForm').submit();">
+            <i class="bi bi-box-arrow-left text-white-50"></i> Sair
+        </button>
+    </div>
+</aside>

@@ -647,3 +647,14 @@ body {
   padding: 0.75rem 0 1rem;
   border-top: 1px solid rgba(255, 255, 255, 0.12);
 }
+
+.delete-statement-btn {
+  background: transparent;
+  z-index: 5;
+  color: rgba(255, 255, 255, 0.5);
+  transition: color 0.2s;
+}
+
+.delete-statement-btn-active {
+  color: rgba(0, 0, 0, 0.4);
+}
