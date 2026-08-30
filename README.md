@@ -58,7 +58,7 @@ out of a spreadsheet.
 | Backend | ASP.NET Core MVC (net9.0), C#, LINQ, EF Core 9 |
 | Database | Firebird 3.0 |
 | Frontend | Razor views, Bootstrap 5, vanilla JavaScript (`fetch`), Chart.js |
-| Testing | xUnit |
+| Testing | xUnit, EF Core in-memory provider |
 | Local infra | Docker Compose |
 
 ## 🚀 Getting Started
@@ -87,9 +87,28 @@ The default launch profiles expect a local Firebird install instead; see
 dotnet test
 ```
 
-Covers the keyword-matching algorithm behind automatic categorisation, the
-parsing helpers for Brazilian currency and date formats (`R$ 1.500,50` →
-`1500.50m`), and the data-annotation validation on the view models.
+The suite is deliberately selective. It targets the rules that would be
+expensive to get wrong rather than chasing coverage of plain CRUD:
+
+- **Dashboard figures** — income and expenses split by sign, expenses reported
+  as positive amounts, uncategorised spending grouped under *Outros*,
+  percentage shares per category, and the fixed-expense checklist that marks a
+  category paid only once its transaction carries a settlement date.
+- **Spreadsheet import** — a valid row parsed into typed values, rows with
+  missing columns or malformed dates flagged without discarding the rest of
+  the batch, blank lines skipped, and categories assigned from keyword
+  matching.
+- **Account deletion** — refused while transactions still reference the
+  account, which is an invariant held in code since the schema carries no
+  foreign keys.
+- **Helpers** — Brazilian currency and date parsing (`R$ 1.500,50` →
+  `1500.50m`) and the data-annotation validation on the view models.
+
+Service tests run against the EF Core in-memory provider. It is not a
+relational engine: it enforces no constraints and does not translate SQL the
+way Firebird does, so these tests exercise service logic rather than database
+behaviour. Testing the latter would call for integration tests against a real
+Firebird instance.
 
 ## 🏗️ Architecture
 
@@ -130,7 +149,6 @@ A few decisions worth calling out:
 Known gaps, in the order they are worth closing:
 
 - [ ] A screen to change the PIN; today it is set once on first access
-- [ ] Service-level tests against an in-memory provider
 
 ## 📄 License
 
