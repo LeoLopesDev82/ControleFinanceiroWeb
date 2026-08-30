@@ -44,6 +44,7 @@ out of a spreadsheet.
 - Stored as a PBKDF2 hash, never in clear text
 - Five wrong attempts lock further tries for five minutes
 - Persistent cookie, so each device is asked once and not again
+- Changing the PIN signs the other devices out, so they must enter the new one
 
 **Dashboard**
 - Income, expenses and balance for the selected period
@@ -148,7 +149,7 @@ A few decisions worth calling out:
 
 Known gaps, in the order they are worth closing:
 
-- [ ] A screen to change the PIN; today it is set once on first access
+- [ ] Invalidate the lockout across instances; it is held in memory today
 
 ## 📄 License
 

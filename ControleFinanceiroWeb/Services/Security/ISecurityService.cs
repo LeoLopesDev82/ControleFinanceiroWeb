@@ -10,5 +10,9 @@ namespace ControleFinanceiroWeb.Services.Security
         Task<ServiceResult> DefinePinAsync(string pin);
 
         Task<ServiceResult> ValidatePinAsync(string pin);
+
+        Task<ServiceResult> ChangePinAsync(string currentPin, string newPin);
+
+        Task<string?> GetSecurityStampAsync();
     }
 }

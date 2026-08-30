@@ -43,7 +43,7 @@ namespace ControleFinanceiroWeb.Services.Security
 
             try
             {
-                var entity = new AppSecurity();
+                var entity = new AppSecurity { SecurityStamp = NewSecurityStamp() };
 
                 entity.PinHash = _hasher.HashPassword(entity, pin);
 
@@ -100,9 +100,66 @@ namespace ControleFinanceiroWeb.Services.Security
             }
         }
 
+        public async Task<ServiceResult> ChangePinAsync(string currentPin, string newPin)
+        {
+            var currentPinResult = await ValidatePinAsync(currentPin);
+
+            if (!currentPinResult.Success)
+            {
+                return currentPinResult;
+            }
+
+            var formatResult = ValidateFormat(newPin);
+
+            if (!formatResult.Success)
+                return formatResult;
+
+            if (currentPin == newPin)
+            {
+                return new ServiceResult { Success = false, Message = "O novo PIN deve ser diferente do atual." };
+            }
+
+            try
+            {
+                var entity = await _context.AppSecurity.FirstOrDefaultAsync();
+
+                if (entity == null)
+                {
+                    return new ServiceResult { Success = false, Message = "Nenhum PIN foi definido ainda." };
+                }
+
+                entity.PinHash = _hasher.HashPassword(entity, newPin);
+                entity.SecurityStamp = NewSecurityStamp();
+
+                await _context.SaveChangesAsync();
+
+                _logger.LogInformation("The access PIN was changed and the previous sessions were invalidated.");
+
+                return new ServiceResult { Success = true, Message = "PIN alterado com sucesso." };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to change the access PIN.");
+
+                return new ServiceResult { Success = false, Message = "Ocorreu um erro ao alterar o PIN." };
+            }
+        }
+
+        public async Task<string?> GetSecurityStampAsync()
+        {
+            return await _context.AppSecurity
+                .Select(a => a.SecurityStamp)
+                .FirstOrDefaultAsync();
+        }
+
         #endregion
 
         #region Private Methods
+
+        private static string NewSecurityStamp()
+        {
+            return Guid.NewGuid().ToString("N");
+        }
 
         private ServiceResult ValidateFormat(string pin)
         {

@@ -6,6 +6,8 @@ using ControleFinanceiroWeb.Services.Categories;
 using ControleFinanceiroWeb.Services.StatementType;
 using ControleFinanceiroWeb.Services.Summary;
 using ControleFinanceiroWeb.Services.Security;
+using ControleFinanceiroWeb.Controllers;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -60,6 +62,24 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.Cookie.HttpOnly = true;
         options.Cookie.SameSite = SameSiteMode.Lax;
         options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+
+        // Changing the PIN issues a new security stamp. A cookie carrying the
+        // previous one belongs to a device signed in before the change, so it
+        // is rejected and that device has to enter the new PIN.
+        options.Events.OnValidatePrincipal = async context =>
+        {
+            var securityService = context.HttpContext.RequestServices.GetRequiredService<ISecurityService>();
+
+            var currentStamp = await securityService.GetSecurityStampAsync();
+            var cookieStamp = context.Principal?.FindFirst(AccountController.SecurityStampClaim)?.Value;
+
+            if (currentStamp != null && currentStamp == cookieStamp)
+                return;
+
+            context.RejectPrincipal();
+
+            await context.HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+        };
     });
 
 builder.Services.AddAntiforgery(options => options.HeaderName = "RequestVerificationToken");

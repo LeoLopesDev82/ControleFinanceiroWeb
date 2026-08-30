@@ -50,6 +50,7 @@
 
     <partial name="_StatementTypeModal" />
     <partial name="_TransactionModal" />
+    <partial name="_ChangePinModal" />
 
     @* Category Management Modal *@
     @await Html.PartialAsync("_CategoryModal")
@@ -101,6 +102,7 @@
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/js/messagebox.js" asp-append-version="true"></script>
     <script src="~/js/layout.js" asp-append-version="true"></script>
+    <script src="~/js/pin.js" asp-append-version="true"></script>
     
     @await RenderSectionAsync("Scripts", required: false)
 </body>

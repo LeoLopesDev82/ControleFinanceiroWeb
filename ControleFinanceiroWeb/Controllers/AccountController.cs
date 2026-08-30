@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using ControleFinanceiroWeb.Models;
 using ControleFinanceiroWeb.Models.ViewModels;
 using ControleFinanceiroWeb.Services.Security;
 
@@ -13,6 +14,8 @@ namespace ControleFinanceiroWeb.Controllers
     [AllowAnonymous]
     public class AccountController : Controller
     {
+        public const string SecurityStampClaim = "cfw:stamp";
+
         private readonly ISecurityService _securityService;
 
         public AccountController(ISecurityService securityService)
@@ -90,6 +93,28 @@ namespace ControleFinanceiroWeb.Controllers
             return RedirectToLocal(model.ReturnUrl);
         }
 
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangePin([FromBody] PinChangeViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new ServiceResult { Success = false, Message = "Informe um PIN de 6 dígitos." });
+            }
+
+            var result = await _securityService.ChangePinAsync(model.CurrentPin, model.NewPin);
+
+            if (!result.Success)
+            {
+                return BadRequest(result);
+            }
+
+            await SignInAsync();
+
+            return Ok(result);
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
@@ -113,7 +138,8 @@ namespace ControleFinanceiroWeb.Controllers
         {
             var claims = new List<Claim>
             {
-                new(ClaimTypes.Name, "Casa")
+                new(ClaimTypes.Name, "Casa"),
+                new(SecurityStampClaim, await _securityService.GetSecurityStampAsync() ?? string.Empty)
             };
 
             var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);

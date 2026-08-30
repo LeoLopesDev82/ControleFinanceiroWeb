@@ -14,5 +14,10 @@ namespace ControleFinanceiroWeb.Models.Entities
         [Column("PIN_HASH")]
         [MaxLength(255)]
         public string PinHash { get; set; } = string.Empty;
+
+        [Required]
+        [Column("SECURITY_STAMP")]
+        [MaxLength(64)]
+        public string SecurityStamp { get; set; } = string.Empty;
     }
 }

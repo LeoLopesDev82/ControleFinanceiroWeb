@@ -1,0 +1,41 @@
+@* Modal para alterar o PIN de acesso compartilhado *@
+<div class="modal fade" id="modalChangePin" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 420px;">
+        <div class="modal-content modal-content-glass">
+            <div class="modal-header modal-header-custom bg-light">
+                <h5 class="modal-title fw-bold d-flex align-items-center gap-2 text-dark">
+                    <i class="bi bi-key text-success"></i> Alterar PIN
+                </h5>
+
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+
+            <form id="formChangePin">
+                <div class="modal-body p-4">
+                    <p class="text-muted mb-4 fs-7">
+                        Ao alterar o PIN, os outros dispositivos serão desconectados e precisarão entrar com o novo código.
+                    </p>
+
+                    <div class="mb-3">
+                        <label class="form-label text-dark fw-semibold" for="inputCurrentPin">PIN atual <span class="text-danger">*</span></label>
+                        <input type="password" class="form-control pin-input" id="inputCurrentPin" inputmode="numeric" maxlength="6" autocomplete="off" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label text-dark fw-semibold" for="inputNewPin">Novo PIN <span class="text-danger">*</span></label>
+                        <input type="password" class="form-control pin-input" id="inputNewPin" inputmode="numeric" maxlength="6" autocomplete="off" required>
+                    </div>
+
+                    <div class="mb-1">
+                        <label class="form-label text-dark fw-semibold" for="inputConfirmPin">Confirme o novo PIN <span class="text-danger">*</span></label>
+                        <input type="password" class="form-control pin-input" id="inputConfirmPin" inputmode="numeric" maxlength="6" autocomplete="off" required>
+                    </div>
+                </div>
+
+                <div class="modal-footer modal-footer-custom d-flex justify-content-end bg-light">
+                    <button type="submit" class="btn btn-emerald"><i class="bi bi-check-lg me-1"></i> Alterar PIN</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

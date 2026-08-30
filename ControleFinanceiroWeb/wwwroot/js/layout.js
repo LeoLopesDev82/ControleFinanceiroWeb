@@ -227,3 +227,61 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 });
+
+/**
+ * Opens the change PIN modal with the fields cleared.
+ */
+function openChangePinModal() {
+    const modalEl = document.getElementById('modalChangePin');
+
+    if (!modalEl) return;
+
+    document.getElementById('formChangePin').reset();
+
+    let modal = bootstrap.Modal.getInstance(modalEl);
+
+    if (!modal) {
+        modal = new bootstrap.Modal(modalEl);
+    }
+
+    modal.show();
+}
+
+/**
+ * Submits the change PIN form and reports the outcome.
+ */
+document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('formChangePin');
+
+    if (!form) return;
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const currentPin = document.getElementById('inputCurrentPin').value;
+        const newPin = document.getElementById('inputNewPin').value;
+        const confirmPin = document.getElementById('inputConfirmPin').value;
+
+        if (newPin !== confirmPin) {
+            await messageBox('A confirmação não confere com o novo PIN.', false, 'Alterar PIN');
+
+            return;
+        }
+
+        const result = await BaseFetch.post('/Account/ChangePin', {
+            currentPin: currentPin,
+            newPin: newPin,
+            confirmPin: confirmPin
+        });
+
+        if (!result.success) {
+            await messageBox(result.message || 'Não foi possível alterar o PIN.', false, 'Alterar PIN');
+
+            return;
+        }
+
+        bootstrap.Modal.getInstance(document.getElementById('modalChangePin'))?.hide();
+
+        showToast(result.message || 'PIN alterado com sucesso.');
+    });
+});
