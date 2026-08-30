@@ -42,7 +42,8 @@ out of a spreadsheet.
 **Access**
 - Shared 6-digit PIN, set by whoever opens the application for the first time
 - Stored as a PBKDF2 hash, never in clear text
-- Five wrong attempts lock further tries for five minutes
+- Wrong attempts throttle progressively, from 30 seconds on the third to
+  15 minutes, and the wait survives a restart
 - Persistent cookie, so each device is asked once and not again
 - Changing the PIN signs the other devices out, so they must enter the new one
 
@@ -149,7 +150,7 @@ A few decisions worth calling out:
 
 Known gaps, in the order they are worth closing:
 
-- [ ] Invalidate the lockout across instances; it is held in memory today
+- [ ] Rate limit at the HTTP layer as well, so the throttle also covers requests that never reach the PIN check
 
 ## 📄 License
 

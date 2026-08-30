@@ -164,7 +164,7 @@ DELETE FROM APP_SECURITY;
 COMMIT;
 ```
 
-The lockout that follows five wrong attempts is held in memory, not in the
-database, so restarting the application clears it. That is a deliberate
-simplification for a single-instance deployment; a multi-instance one would
-need it persisted or moved to a distributed cache.
+The throttling state lives in the same row: FAILED_ATTEMPTS counts the
+consecutive mistakes and LOCKED_UNTIL holds the moment the next attempt is
+accepted. Keeping it in the database rather than in memory means restarting
+the application no longer clears a lock.

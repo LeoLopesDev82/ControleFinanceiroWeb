@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -11,14 +12,12 @@ namespace ControleFinanceiroWeb.Services.Security
     public class SecurityService : ISecurityService
     {
         private readonly AppDbContext _context;
-        private readonly IPinLockout _lockout;
         private readonly ILogger<SecurityService> _logger;
         private readonly PasswordHasher<AppSecurity> _hasher = new();
 
-        public SecurityService(AppDbContext context, IPinLockout lockout, ILogger<SecurityService> logger)
+        public SecurityService(AppDbContext context, ILogger<SecurityService> logger)
         {
             _context = context;
-            _lockout = lockout;
             _logger = logger;
         }
 
@@ -62,16 +61,6 @@ namespace ControleFinanceiroWeb.Services.Security
 
         public async Task<ServiceResult> ValidatePinAsync(string pin)
         {
-            if (_lockout.IsLocked())
-            {
-                return BuildLockedResult();
-            }
-
-            var formatResult = ValidateFormat(pin);
-
-            if (!formatResult.Success)
-                return formatResult;
-
             try
             {
                 var entity = await _context.AppSecurity.FirstOrDefaultAsync();
@@ -81,14 +70,26 @@ namespace ControleFinanceiroWeb.Services.Security
                     return new ServiceResult { Success = false, Message = "Nenhum PIN foi definido ainda." };
                 }
 
+                var remaining = RemainingLock(entity);
+
+                if (remaining.HasValue)
+                {
+                    return BuildLockedResult(remaining.Value);
+                }
+
+                var formatResult = ValidateFormat(pin);
+
+                if (!formatResult.Success)
+                    return formatResult;
+
                 var verification = _hasher.VerifyHashedPassword(entity, entity.PinHash, pin);
 
                 if (verification == PasswordVerificationResult.Failed)
                 {
-                    return RegisterFailedAttempt();
+                    return await RegisterFailedAttemptAsync(entity);
                 }
 
-                _lockout.RegisterSuccess();
+                await ClearAttemptsAsync(entity);
 
                 return new ServiceResult { Success = true };
             }
@@ -161,6 +162,16 @@ namespace ControleFinanceiroWeb.Services.Security
             return Guid.NewGuid().ToString("N");
         }
 
+        private static TimeSpan? RemainingLock(AppSecurity entity)
+        {
+            if (!entity.LockedUntil.HasValue)
+                return null;
+
+            var remaining = entity.LockedUntil.Value - DateTime.UtcNow;
+
+            return remaining > TimeSpan.Zero ? remaining : null;
+        }
+
         private ServiceResult ValidateFormat(string pin)
         {
             bool isValid = !string.IsNullOrWhiteSpace(pin)
@@ -175,28 +186,43 @@ namespace ControleFinanceiroWeb.Services.Security
             return new ServiceResult { Success = false, Message = "O PIN deve ter exatamente 6 dígitos." };
         }
 
-        private ServiceResult RegisterFailedAttempt()
+        private async Task<ServiceResult> RegisterFailedAttemptAsync(AppSecurity entity)
         {
-            _lockout.RegisterFailure();
+            entity.FailedAttempts++;
 
-            _logger.LogWarning("Rejected an access attempt with an incorrect PIN.");
+            var lockFor = PinThrottle.LockFor(entity.FailedAttempts);
 
-            if (_lockout.IsLocked())
+            entity.LockedUntil = lockFor.HasValue ? DateTime.UtcNow.Add(lockFor.Value) : null;
+
+            await _context.SaveChangesAsync();
+
+            _logger.LogWarning("Rejected an access attempt with an incorrect PIN. Consecutive failures: {FailedAttempts}.", entity.FailedAttempts);
+
+            if (lockFor.HasValue)
             {
-                return BuildLockedResult();
+                return BuildLockedResult(lockFor.Value);
             }
 
             return new ServiceResult { Success = false, Message = "PIN incorreto." };
         }
 
-        private ServiceResult BuildLockedResult()
+        private async Task ClearAttemptsAsync(AppSecurity entity)
         {
-            int minutes = (int)Math.Ceiling(_lockout.RemainingLockSeconds() / 60d);
+            if (entity.FailedAttempts == 0 && !entity.LockedUntil.HasValue)
+                return;
 
+            entity.FailedAttempts = 0;
+            entity.LockedUntil = null;
+
+            await _context.SaveChangesAsync();
+        }
+
+        private static ServiceResult BuildLockedResult(TimeSpan remaining)
+        {
             return new ServiceResult
             {
                 Success = false,
-                Message = $"Muitas tentativas incorretas. Tente novamente em {minutes} minuto(s)."
+                Message = $"Muitas tentativas incorretas. Tente novamente em {PinThrottle.DescribeWait(remaining)}."
             };
         }
 

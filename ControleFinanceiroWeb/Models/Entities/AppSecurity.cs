@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -19,5 +20,11 @@ namespace ControleFinanceiroWeb.Models.Entities
         [Column("SECURITY_STAMP")]
         [MaxLength(64)]
         public string SecurityStamp { get; set; } = string.Empty;
+
+        [Column("FAILED_ATTEMPTS")]
+        public int FailedAttempts { get; set; }
+
+        [Column("LOCKED_UNTIL")]
+        public DateTime? LockedUntil { get; set; }
     }
 }

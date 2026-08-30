@@ -48,7 +48,6 @@ builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<ICategoryIdentificationService, CategoryIdentificationService>();
 builder.Services.AddScoped<ISummaryService, SummaryService>();
 builder.Services.AddScoped<ISecurityService, SecurityService>();
-builder.Services.AddSingleton<IPinLockout, PinLockout>();
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>

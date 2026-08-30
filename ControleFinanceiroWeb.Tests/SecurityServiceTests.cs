@@ -100,7 +100,7 @@ namespace ControleFinanceiroWeb.Tests
         }
 
         [Fact]
-        public async Task ValidatePinAsync_ShouldLockOut_AfterFiveWrongAttempts()
+        public async Task ValidatePinAsync_ShouldNotLock_OnTheFirstTwoMistakes()
         {
             using var context = InMemoryDatabase.Create();
 
@@ -108,12 +108,97 @@ namespace ControleFinanceiroWeb.Tests
 
             await service.DefinePinAsync("246810");
 
-            for (int attempt = 0; attempt < 5; attempt++)
+            for (int attempt = 0; attempt < 2; attempt++)
             {
-                await service.ValidatePinAsync("000000");
+                var wrong = await service.ValidatePinAsync("000000");
+
+                Assert.Equal("PIN incorreto.", wrong.Message);
             }
 
-            var result = await service.ValidatePinAsync("246810");
+            Assert.True((await service.ValidatePinAsync("246810")).Success);
+        }
+
+        [Fact]
+        public async Task ValidatePinAsync_ShouldLock_OnTheThirdMistake()
+        {
+            using var context = InMemoryDatabase.Create();
+
+            var service = CreateService(context);
+
+            await service.DefinePinAsync("246810");
+
+            await service.ValidatePinAsync("000000");
+            await service.ValidatePinAsync("000000");
+
+            var third = await service.ValidatePinAsync("000000");
+
+            Assert.False(third.Success);
+            Assert.Contains("30 segundos", third.Message);
+
+            var correct = await service.ValidatePinAsync("246810");
+
+            Assert.False(correct.Success);
+            Assert.Contains("Muitas tentativas", correct.Message);
+        }
+
+        [Theory]
+        [InlineData(3, "30 segundos")]
+        [InlineData(4, "2 minutos")]
+        [InlineData(5, "5 minutos")]
+        [InlineData(6, "15 minutos")]
+        [InlineData(9, "15 minutos")]
+        public async Task ValidatePinAsync_ShouldStretchTheWait_AsMistakesPileUp(int attempts, string expectedWait)
+        {
+            using var context = InMemoryDatabase.Create();
+
+            var service = CreateService(context);
+
+            await service.DefinePinAsync("246810");
+
+            string message = string.Empty;
+
+            for (int attempt = 0; attempt < attempts; attempt++)
+            {
+                ReleaseLock(context);
+
+                message = (await service.ValidatePinAsync("000000")).Message;
+            }
+
+            Assert.Contains(expectedWait, message);
+        }
+
+        [Fact]
+        public async Task ValidatePinAsync_ShouldForgetTheMistakes_OnceTheCorrectPinIsAccepted()
+        {
+            using var context = InMemoryDatabase.Create();
+
+            var service = CreateService(context);
+
+            await service.DefinePinAsync("246810");
+
+            await service.ValidatePinAsync("000000");
+            await service.ValidatePinAsync("000000");
+            await service.ValidatePinAsync("246810");
+
+            var afterSuccess = await service.ValidatePinAsync("000000");
+
+            Assert.Equal("PIN incorreto.", afterSuccess.Message);
+            Assert.Equal(1, context.AppSecurity.Single().FailedAttempts);
+        }
+
+        [Fact]
+        public async Task ValidatePinAsync_ShouldKeepTheLock_AcrossServiceInstances()
+        {
+            using var context = InMemoryDatabase.Create();
+
+            await CreateService(context).DefinePinAsync("246810");
+
+            for (int attempt = 0; attempt < 3; attempt++)
+            {
+                await CreateService(context).ValidatePinAsync("000000");
+            }
+
+            var result = await CreateService(context).ValidatePinAsync("246810");
 
             Assert.False(result.Success);
             Assert.Contains("Muitas tentativas", result.Message);
@@ -125,7 +210,19 @@ namespace ControleFinanceiroWeb.Tests
 
         private static SecurityService CreateService(AppDbContext context)
         {
-            return new SecurityService(context, new PinLockout(), NullLogger<SecurityService>.Instance);
+            return new SecurityService(context, NullLogger<SecurityService>.Instance);
+        }
+
+        private static void ReleaseLock(AppDbContext context)
+        {
+            var entity = context.AppSecurity.SingleOrDefault();
+
+            if (entity == null)
+                return;
+
+            entity.LockedUntil = null;
+
+            context.SaveChanges();
         }
 
         #endregion
