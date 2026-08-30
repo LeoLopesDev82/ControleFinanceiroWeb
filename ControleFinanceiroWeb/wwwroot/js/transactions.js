@@ -292,6 +292,7 @@ function openImportModal() {
     document.getElementById('importPreviewContainer').classList.add('d-none');
     document.getElementById('importErrorMessage').classList.add('d-none');
     document.getElementById('btnConfirmImport').classList.add('d-none');
+    document.getElementById('importModalFooter').classList.add('d-none');
     document.querySelector('#tableImportPreview tbody').innerHTML = '';
 
     let modal = bootstrap.Modal.getInstance(modalEl);
@@ -328,6 +329,7 @@ function prepareImportPreviewUI(tbody) {
     document.getElementById('importPreviewContainer').classList.remove('d-none');
     document.getElementById('importErrorMessage').classList.add('d-none');
     document.getElementById('btnConfirmImport').classList.add('d-none');
+    document.getElementById('importModalFooter').classList.add('d-none');
 }
 
 /**
@@ -429,9 +431,11 @@ function updateImportFooterControls(hasErrors) {
     if (hasErrors) {
         document.getElementById('importErrorMessage').classList.remove('d-none');
         document.getElementById('btnConfirmImport').classList.add('d-none');
+        document.getElementById('importModalFooter').classList.add('d-none');
     } else {
         document.getElementById('importErrorMessage').classList.add('d-none');
         document.getElementById('btnConfirmImport').classList.remove('d-none');
+        document.getElementById('importModalFooter').classList.remove('d-none');
     }
 }
 

@@ -72,16 +72,16 @@ async function openCategoryManagementModal() {
 async function showCategoryListMode() {
     const modalTitle = document.getElementById('modalCategoryManagementTitle');
     const bodyEl = document.getElementById('modalCategoryManagementBody');
-    const listFooter = document.getElementById('categoryModalListFooter');
+    const modalFooter = document.getElementById('categoryModalFooter');
     const formFooter = document.getElementById('categoryModalFormFooter');
 
     if (modalTitle)
         modalTitle.innerHTML = '<i class="bi bi-tags text-success"></i> Gerenciar Categorias';
 
-    if (listFooter) {
-        listFooter.classList.remove('d-none');
-        listFooter.classList.add('d-flex');
+    if (modalFooter) {
+        modalFooter.classList.add('d-none');
     }
+
     if (formFooter) {
         formFooter.classList.remove('d-flex');
         formFooter.classList.add('d-none');
@@ -113,7 +113,7 @@ async function showCategoryListMode() {
 async function openCategoryFormModal(id = 0) {
     const modalTitle = document.getElementById('modalCategoryManagementTitle');
     const bodyEl = document.getElementById('modalCategoryManagementBody');
-    const listFooter = document.getElementById('categoryModalListFooter');
+    const modalFooter = document.getElementById('categoryModalFooter');
     const formFooter = document.getElementById('categoryModalFormFooter');
 
     if (id === 0) {
@@ -124,9 +124,8 @@ async function openCategoryFormModal(id = 0) {
             modalTitle.innerHTML = '<i class="bi bi-pencil-square text-success"></i> Editar Categoria';
     }
 
-    if (listFooter) {
-        listFooter.classList.remove('d-flex');
-        listFooter.classList.add('d-none');
+    if (modalFooter) {
+        modalFooter.classList.remove('d-none');
     }
 
     if (formFooter) {
@@ -246,3 +245,28 @@ async function refreshCategoryDropdown() {
     }
 }
 //#endregion
+/**
+ * Closes the category modal, or steps back to the list when the form is open.
+ * The form is a second mode inside the same modal rather than a separate
+ * dialog, so dismissing it should return to the list the user came from.
+ */
+document.addEventListener('DOMContentLoaded', () => {
+    const closeButton = document.getElementById('btnCloseCategoryModal');
+
+    if (!closeButton) return;
+
+    closeButton.addEventListener('click', async () => {
+        const formFooter = document.getElementById('categoryModalFormFooter');
+        const isFormMode = formFooter && !formFooter.classList.contains('d-none');
+
+        if (isFormMode) {
+            await showCategoryListMode();
+
+            return;
+        }
+
+        const modalEl = document.getElementById('modalCategoryManagement');
+
+        bootstrap.Modal.getInstance(modalEl)?.hide();
+    });
+});
