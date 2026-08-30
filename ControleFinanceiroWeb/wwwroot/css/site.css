@@ -532,8 +532,14 @@ body {
 }
 
 @media (max-width: 991.98px) {
+  /* The header holds the title, the period filter and the action buttons,
+     which stack on a narrow screen and reach some 580px tall. Pinned, it
+     froze about four fifths of the viewport and left a sliver of the report
+     visible underneath, so it scrolls away with the page here. The bar with
+     the menu button stays pinned on its own. */
   .sticky-header-container {
-    top: 56px;
+    position: static;
+    top: auto;
     padding-top: 1rem;
     margin-top: -1rem;
     margin-left: -1rem;
