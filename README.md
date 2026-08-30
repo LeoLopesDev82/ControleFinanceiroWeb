@@ -8,9 +8,25 @@ A personal finance web application built with ASP.NET Core MVC, used daily to
 run a household's budget. It is a full web rewrite of an earlier Windows Forms
 application, now responsive and reachable from any device on the home network.
 
-> Screenshots: replace the two files under `docs/` with your own captures.
+![The summary dashboard](docs/screenshot-dashboard.png)
 
-![Dashboard](docs/screenshot-dashboard.png)
+## 🏡 Why it exists
+
+It was built for one user: my wife. She ran the household budget from a
+spreadsheet and kept hitting its edges — categories that had to be retyped, no
+easy read on how the month was shaping up, and the file sitting on one
+computer.
+
+So I built her the thing she actually needed. ASP.NET Core was a deliberate
+choice rather than a desktop application: it runs on one machine at home and
+everyone reaches it from any browser in the house, phone included, instead of
+passing a file around.
+
+The spreadsheet did not go to waste either. Transactions are still brought in
+by pasting rows straight out of Excel, which is why the import screen exists
+at all — it was the bridge from how she already worked.
+
+She has used it every month since, and that is the part I am happiest about.
 
 ## 🧾 Overview
 
@@ -52,6 +68,16 @@ out of a spreadsheet.
 - Accumulated cash-flow chart and expense distribution by category
 - Fixed-expense checklist showing what is paid and what is still pending
 - Uncategorised transactions surfaced for manual correction
+
+Each account keeps its own statement, with the running credit, debit and
+balance for the period on top of the entries:
+
+![The statement for one account](docs/screenshot-transactions.png)
+
+Bulk entry is a paste away: copy the rows from a spreadsheet, drop them in,
+and review the parsed preview before anything is written.
+
+![Importing rows pasted from a spreadsheet](docs/screenshot-import.png)
 
 ## 🛠️ Tech Stack
 
