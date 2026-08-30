@@ -60,7 +60,7 @@ Requires the [.NET 9 SDK](https://dotnet.microsoft.com/download) and
 git clone https://github.com/LeoLopesDev82/ControleFinanceiroWeb.git
 cd ControleFinanceiroWeb
 docker compose up -d
-dotnet run --project ControleFinanceiroWeb
+dotnet run --project ControleFinanceiroWeb --launch-profile "Docker database"
 ```
 
 The container brings up Firebird with the schema and demo data already
@@ -68,7 +68,7 @@ applied, so there is nothing to install or configure. The demo data is
 fictitious and dated relative to the current month, so the dashboard is
 populated on first open.
 
-Prefer a local Firebird install, or port 3050 already taken? See
+The default launch profiles expect a local Firebird install instead; see
 [`database/README.md`](database/README.md).
 
 ## 🧪 Tests
