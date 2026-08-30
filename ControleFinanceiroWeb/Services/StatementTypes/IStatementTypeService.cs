@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using ControleFinanceiroWeb.Models;
 using ControleFinanceiroWeb.Models.ViewModels;
 
-namespace ControleFinanceiroWeb.Services.StatementType
+namespace ControleFinanceiroWeb.Services.StatementTypes
 {
     public interface IStatementTypeService
     {

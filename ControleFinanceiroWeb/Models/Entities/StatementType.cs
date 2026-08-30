@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace ControleFinanceiroWeb.Models.Entities
 {
     [Table("STATEMENT_TYPES")]
-    public class StatementTypes
+    public class StatementType
     {
         [Key]
         [Column("ID")]

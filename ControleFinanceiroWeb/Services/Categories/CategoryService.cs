@@ -213,7 +213,7 @@ namespace ControleFinanceiroWeb.Services.Categories
         // Checks if a category is currently referenced by any transaction statements.
         private async Task<bool> IsCategoryReferencedAsync(int id)
         {
-            return await _context.Statement.AnyAsync(s => s.EntryId == id);
+            return await _context.Statement.AnyAsync(s => s.CategoryId == id);
         }
 
         #endregion

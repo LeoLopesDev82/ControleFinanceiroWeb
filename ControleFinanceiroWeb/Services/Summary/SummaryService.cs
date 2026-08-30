@@ -130,7 +130,7 @@ namespace ControleFinanceiroWeb.Services.Summary
             var totalExpensesSum = Math.Abs(expenses.Sum(e => e.Amount ?? 0m));
 
             var groupedExpenses = expenses
-                .GroupBy(e => e.EntryId)
+                .GroupBy(e => e.CategoryId)
                 .Select(g => new
                 {
                     CategoryId = g.Key,
@@ -190,7 +190,7 @@ namespace ControleFinanceiroWeb.Services.Summary
             var totalRevenuesSum = revenuesList.Sum(e => e.Amount ?? 0m);
 
             var groupedRevenues = revenuesList
-                .GroupBy(e => e.EntryId)
+                .GroupBy(e => e.CategoryId)
                 .Select(g => new
                 {
                     CategoryId = g.Key,
@@ -256,7 +256,7 @@ namespace ControleFinanceiroWeb.Services.Summary
             foreach (var category in fixedCategories)
             {
                 var categoryTransactions = transactions
-                    .Where(t => t.EntryId == category.Id && t.Amount < 0)
+                    .Where(t => t.CategoryId == category.Id && t.Amount < 0)
                     .ToList();
 
                 if (categoryTransactions.Any())

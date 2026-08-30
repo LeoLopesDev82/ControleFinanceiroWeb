@@ -111,7 +111,7 @@ namespace ControleFinanceiroWeb.Services.Categories
                 .Where(s => s.StatementTypeId == statementTypeId &&
                             s.TransactionDate >= startDate &&
                             s.TransactionDate <= endDate &&
-                            s.EntryId == null)
+                            s.CategoryId == null)
                 .ToListAsync();
         }
 
@@ -126,7 +126,7 @@ namespace ControleFinanceiroWeb.Services.Categories
 
                 if (categoryId.HasValue)
                 {
-                    t.EntryId = categoryId.Value;
+                    t.CategoryId = categoryId.Value;
 
                     identifiedCount++;
                 }

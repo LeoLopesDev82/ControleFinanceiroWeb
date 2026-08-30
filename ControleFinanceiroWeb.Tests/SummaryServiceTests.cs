@@ -242,7 +242,7 @@ namespace ControleFinanceiroWeb.Tests
                 TransactionDate = settled ? dueDate : null,
                 Amount = amount,
                 Description = "Lançamento de teste",
-                EntryId = categoryId,
+                CategoryId = categoryId,
                 StatementTypeId = 0
             });
         }

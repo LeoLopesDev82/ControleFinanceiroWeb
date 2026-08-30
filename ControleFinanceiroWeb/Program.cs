@@ -1,9 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using ControleFinanceiroWeb.Data;
-using ControleFinanceiroWeb.Services;
 using ControleFinanceiroWeb.Services.Transactions;
 using ControleFinanceiroWeb.Services.Categories;
-using ControleFinanceiroWeb.Services.StatementType;
+using ControleFinanceiroWeb.Services.StatementTypes;
 using ControleFinanceiroWeb.Services.Summary;
 using ControleFinanceiroWeb.Services.Security;
 using ControleFinanceiroWeb.Controllers;

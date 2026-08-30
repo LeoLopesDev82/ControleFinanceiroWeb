@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging.Abstractions;
 using ControleFinanceiroWeb.Data;
 using ControleFinanceiroWeb.Models.Entities;
-using ControleFinanceiroWeb.Services.StatementType;
+using ControleFinanceiroWeb.Services.StatementTypes;
 
 namespace ControleFinanceiroWeb.Tests
 {
@@ -16,7 +16,7 @@ namespace ControleFinanceiroWeb.Tests
         {
             using var context = InMemoryDatabase.Create();
 
-            context.StatementTypes.Add(new StatementTypes { Id = 4, Description = "Cartão de Crédito" });
+            context.StatementTypes.Add(new StatementType { Id = 4, Description = "Cartão de Crédito" });
             context.Statement.Add(new Statement { Amount = -120m, Description = "COMPRA", StatementTypeId = 4 });
             
             await context.SaveChangesAsync();
@@ -33,7 +33,7 @@ namespace ControleFinanceiroWeb.Tests
         {
             using var context = InMemoryDatabase.Create();
 
-            context.StatementTypes.Add(new StatementTypes { Id = 4, Description = "Conta antiga" });
+            context.StatementTypes.Add(new StatementType { Id = 4, Description = "Conta antiga" });
             
             await context.SaveChangesAsync();
 
@@ -59,8 +59,8 @@ namespace ControleFinanceiroWeb.Tests
         {
             using var context = InMemoryDatabase.Create();
 
-            context.StatementTypes.Add(new StatementTypes { Id = 4, Description = "Conta A" });
-            context.StatementTypes.Add(new StatementTypes { Id = 5, Description = "Conta B" });
+            context.StatementTypes.Add(new StatementType { Id = 4, Description = "Conta A" });
+            context.StatementTypes.Add(new StatementType { Id = 5, Description = "Conta B" });
             context.Statement.Add(new Statement { Amount = -120m, Description = "COMPRA", StatementTypeId = 5 });
             
             await context.SaveChangesAsync();

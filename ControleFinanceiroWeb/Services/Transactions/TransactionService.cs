@@ -36,7 +36,7 @@ namespace ControleFinanceiroWeb.Services.Transactions
                                  s.TransactionDate >= startDate &&
                                  s.TransactionDate <= endDate
                            join c in _context.Categories
-                               on s.EntryId equals c.Id into catGroup
+                               on s.CategoryId equals c.Id into catGroup
                            from category in catGroup.DefaultIfEmpty()
                            orderby s.TransactionDate
                            select new
@@ -278,7 +278,7 @@ namespace ControleFinanceiroWeb.Services.Transactions
                         DueDate = s.DueDate?.ToString("yyyy-MM-dd"),
                         Amount = s.Amount?.ToString("F2", System.Globalization.CultureInfo.GetCultureInfo("pt-BR")) ?? "0,00",
                         Description = s.Description,
-                        CategoryId = s.EntryId?.ToString(),
+                        CategoryId = s.CategoryId?.ToString(),
                         StatementTypeId = s.StatementTypeId?.ToString()
                     };
                 }
@@ -324,7 +324,7 @@ namespace ControleFinanceiroWeb.Services.Transactions
             entity.DueDate = Helpers.ConversionHelper.ToNullableDateTime(model.DueDate);
             entity.Amount = Helpers.ConversionHelper.ToNullableDecimal(model.Amount);
             entity.Description = Helpers.ConversionHelper.ToNullableString(model.Description);
-            entity.EntryId = Helpers.ConversionHelper.ToNullableInt(model.CategoryId);
+            entity.CategoryId = Helpers.ConversionHelper.ToNullableInt(model.CategoryId);
             entity.StatementTypeId = Helpers.ConversionHelper.ToNullableInt(model.StatementTypeId);
         }
 
@@ -524,7 +524,7 @@ namespace ControleFinanceiroWeb.Services.Transactions
                 DueDate = dueDate.Value,
                 Amount = amount.Value,
                 Description = Helpers.ConversionHelper.ToNullableString(item.Description),
-                EntryId = item.CategoryId > 0 ? item.CategoryId : null,
+                CategoryId = item.CategoryId > 0 ? item.CategoryId : null,
                 StatementTypeId = statementTypeId
             };
 

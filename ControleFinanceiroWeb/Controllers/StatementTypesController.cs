@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 using ControleFinanceiroWeb.Models.ViewModels;
-using ControleFinanceiroWeb.Services.StatementType;
+using ControleFinanceiroWeb.Services.StatementTypes;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ControleFinanceiroWeb.Controllers

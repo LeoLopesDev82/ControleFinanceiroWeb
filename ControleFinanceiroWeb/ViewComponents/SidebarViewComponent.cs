@@ -2,7 +2,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using ControleFinanceiroWeb.Models.ViewModels;
-using ControleFinanceiroWeb.Services.StatementType;
+using ControleFinanceiroWeb.Services.StatementTypes;
 
 namespace ControleFinanceiroWeb.ViewComponents
 {

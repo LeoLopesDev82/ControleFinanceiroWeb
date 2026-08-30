@@ -582,3 +582,18 @@ async function saveImportedItems() {
 }
 
 //#endregion
+/**
+ * Binds the rename button in the statement header. The identifier and the
+ * name travel in data attributes, which Razor encodes, rather than being
+ * interpolated into an inline handler where a crafted account name could
+ * break out of the string.
+ */
+document.addEventListener('DOMContentLoaded', () => {
+    const button = document.getElementById('btnRenameStatementType');
+
+    if (!button) return;
+
+    button.addEventListener('click', () => {
+        openStatementTypeModal(parseInt(button.dataset.statementId, 10), button.dataset.statementName || '');
+    });
+});

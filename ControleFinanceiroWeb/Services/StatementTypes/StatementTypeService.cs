@@ -8,7 +8,7 @@ using ControleFinanceiroWeb.Models;
 using ControleFinanceiroWeb.Models.Entities;
 using ControleFinanceiroWeb.Models.ViewModels;
 
-namespace ControleFinanceiroWeb.Services.StatementType
+namespace ControleFinanceiroWeb.Services.StatementTypes
 {
     // Service responsible for handling CRUD business operations for account statement types.
     public class StatementTypeService : IStatementTypeService
@@ -120,7 +120,7 @@ namespace ControleFinanceiroWeb.Services.StatementType
         {
             try
             {
-                var newStatement = new StatementTypes { Description = name };
+                var newStatement = new StatementType { Description = name };
 
                 _context.StatementTypes.Add(newStatement);
                 await _context.SaveChangesAsync();

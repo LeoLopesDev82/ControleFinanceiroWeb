@@ -24,7 +24,7 @@ namespace ControleFinanceiroWeb.Models.Entities
         public string? Description { get; set; }
 
         [Column("ENTRY_ID")]
-        public int? EntryId { get; set; }
+        public int? CategoryId { get; set; }
 
         [Column("STATEMENT_TYPE_ID")]
         public int? StatementTypeId { get; set; }

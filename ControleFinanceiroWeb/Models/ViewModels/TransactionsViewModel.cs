@@ -1,7 +1,14 @@
+using ControleFinanceiroWeb.Models;
 namespace ControleFinanceiroWeb.Models.ViewModels
 {
     public class TransactionsViewModel
     {
+        public DateRange Period { get; set; }
+
+        public string StatementTypeName { get; set; } = "Extrato";
+
+        public int StatementTypeId { get; set; }
+
         public decimal TotalCredits { get; set; }
         public decimal TotalDebits { get; set; }
         public decimal FinalBalance { get; set; }

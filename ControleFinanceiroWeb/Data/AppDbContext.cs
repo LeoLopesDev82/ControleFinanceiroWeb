@@ -11,7 +11,7 @@ namespace ControleFinanceiroWeb.Data
 
         // Database tables mappings for Statements, StatementTypes and Categories.
         public DbSet<Statement> Statement { get; set; }
-        public DbSet<StatementTypes> StatementTypes { get; set; }
+        public DbSet<StatementType> StatementTypes { get; set; }
         public DbSet<Category> Categories { get; set; }
 
         public DbSet<AppSecurity> AppSecurity { get; set; }

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using ControleFinanceiroWeb.Models;
 using ControleFinanceiroWeb.Services.Transactions;
 using ControleFinanceiroWeb.Services.Categories;
 using ControleFinanceiroWeb.Models.ViewModels;
@@ -24,16 +25,14 @@ namespace ControleFinanceiroWeb.Controllers
         public async Task<IActionResult> Index(string? statementType, int? statementTypeId, DateTime? startDate, DateTime? endDate)
         {
             int id = statementTypeId ?? 0;
-        
-            DateTime start = startDate ?? new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
-            DateTime end = endDate ?? new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.DaysInMonth(DateTime.Today.Year, DateTime.Today.Month));
 
-            ViewBag.CurrentStatementType = string.IsNullOrEmpty(statementType) ? "Extrato" : statementType;
-            ViewBag.CurrentStatementTypeId = id;
-            ViewBag.StartDate = start.ToString("yyyy-MM-dd");
-            ViewBag.EndDate = end.ToString("yyyy-MM-dd");
+            var period = DateRange.FromOrCurrentMonth(startDate, endDate);
 
-            var viewModel = await _transactionService.GetTransactionsAsync(id, start, end);
+            var viewModel = await _transactionService.GetTransactionsAsync(id, period.Start, period.End);
+
+            viewModel.Period = period;
+            viewModel.StatementTypeId = id;
+            viewModel.StatementTypeName = string.IsNullOrEmpty(statementType) ? "Extrato" : statementType;
 
             return View(viewModel);
         }

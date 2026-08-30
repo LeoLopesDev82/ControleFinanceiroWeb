@@ -1,9 +1,12 @@
 using System.Collections.Generic;
+using ControleFinanceiroWeb.Models;
 
 namespace ControleFinanceiroWeb.Models.ViewModels
 {
     public class SummaryViewModel
     {
+        public DateRange Period { get; set; }
+
         public decimal TotalRevenue { get; set; }
         public decimal TotalExpenses { get; set; }
         public decimal TotalBalance { get; set; }
