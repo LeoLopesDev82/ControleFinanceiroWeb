@@ -27,6 +27,28 @@ namespace ControleFinanceiroWeb.Tests
         }
 
         [Theory]
+        [InlineData("1.500", 1500.00)]
+        [InlineData("-2.350", -2350.00)]
+        [InlineData("1.234.567", 1234567.00)]
+        [InlineData("R$ 1.234.567,89", 1234567.89)]
+        public void ToNullableDecimal_ShouldReadADotAsAThousandsSeparator_WhenThereIsNoDecimalComma(string input, decimal expected)
+        {
+            var result = ConversionHelper.ToNullableDecimal(input);
+
+            Assert.Equal(expected, result);
+        }
+
+        [Theory]
+        [InlineData("1.5", 1.50)]
+        [InlineData("25.75", 25.75)]
+        public void ToNullableDecimal_ShouldKeepReadingADotAsDecimal_WhenItIsNotAThousandsGroup(string input, decimal expected)
+        {
+            var result = ConversionHelper.ToNullableDecimal(input);
+
+            Assert.Equal(expected, result);
+        }
+
+        [Theory]
         [InlineData("123,45", 123.45)]
         [InlineData("R$ 1.500,50", 1500.50)]
         [InlineData(" 25.5 ", 25.50)]

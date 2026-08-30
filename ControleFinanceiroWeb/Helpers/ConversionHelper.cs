@@ -1,11 +1,16 @@
 using System;
 using System.Globalization;
+using System.Text.RegularExpressions;
 
 namespace ControleFinanceiroWeb.Helpers
 {
     // Utility helper class for safe type conversions with nullability support.
     public static class ConversionHelper
     {
+        // A dot group of exactly three digits is a thousands separator in the
+        // Brazilian format, where the decimal separator is the comma.
+        private static readonly Regex ThousandsOnly = new(@"^-?\d{1,3}(\.\d{3})+$", RegexOptions.Compiled);
+
         private static readonly string[] AcceptedDateFormats =
         {
             "dd/MM/yyyy",
@@ -38,6 +43,10 @@ namespace ControleFinanceiroWeb.Helpers
             if (clean.Contains(","))
             {
                 clean = clean.Replace(".", "").Replace(",", ".");
+            }
+            else if (ThousandsOnly.IsMatch(clean))
+            {
+                clean = clean.Replace(".", "");
             }
 
             if (decimal.TryParse(clean, NumberStyles.Any, CultureInfo.InvariantCulture, out decimal result))
