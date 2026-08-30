@@ -14,11 +14,13 @@ namespace ControleFinanceiroWeb.Services.StatementType
     public class StatementTypeService : IStatementTypeService
     {
         private readonly AppDbContext _context;
+        private readonly ILogger<StatementTypeService> _logger;
 
         // Initializes a new instance of StatementTypeService.
-        public StatementTypeService(AppDbContext context)
+        public StatementTypeService(AppDbContext context, ILogger<StatementTypeService> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         #region Public Methods
@@ -85,8 +87,10 @@ namespace ControleFinanceiroWeb.Services.StatementType
                     Message = "Extrato excluído com sucesso."
                 };
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _logger.LogError(ex, "Failed to delete a statement type.");
+
                 return new ServiceResult
                 {
                     Success = false,
@@ -128,8 +132,10 @@ namespace ControleFinanceiroWeb.Services.StatementType
                     Id = newStatement.Id
                 };
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _logger.LogError(ex, "Failed to create a statement type.");
+
                 return new ServiceResult
                 {
                     Success = false,
@@ -165,8 +171,10 @@ namespace ControleFinanceiroWeb.Services.StatementType
                     Id = existing.Id
                 };
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _logger.LogError(ex, "Failed to update a statement type.");
+
                 return new ServiceResult
                 {
                     Success = false,

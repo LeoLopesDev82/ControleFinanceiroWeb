@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging.Abstractions;
 using ControleFinanceiroWeb.Models.Entities;
 using ControleFinanceiroWeb.Services.Categories;
 
@@ -36,7 +37,7 @@ namespace ControleFinanceiroWeb.Tests
         [Fact]
         public void IdentifyCategory_ShouldReturnCorrectCategoryId_WhenDescriptionMatchesKeyword()
         {
-            var service = new CategoryIdentificationService(context: null!);
+            var service = new CategoryIdentificationService(context: null!, logger: NullLogger<CategoryIdentificationService>.Instance);
             var categories = GetMockCategories();
          
             string transactionDescription = "PAGTO NETFLIX ASSINATURA";
@@ -49,7 +50,7 @@ namespace ControleFinanceiroWeb.Tests
         [Fact]
         public void IdentifyCategory_ShouldBeCaseInsensitive_WhenMatchingKeywords()
         {
-            var service = new CategoryIdentificationService(context: null!);
+            var service = new CategoryIdentificationService(context: null!, logger: NullLogger<CategoryIdentificationService>.Instance);
             var categories = GetMockCategories();
 
             string transactionDescription = "compra no posto shell";
@@ -62,7 +63,7 @@ namespace ControleFinanceiroWeb.Tests
         [Fact]
         public void IdentifyCategory_ShouldReturnNull_WhenNoKeywordsMatchDescription()
         {
-            var service = new CategoryIdentificationService(context: null!);
+            var service = new CategoryIdentificationService(context: null!, logger: NullLogger<CategoryIdentificationService>.Instance);
             var categories = GetMockCategories();
 
             string transactionDescription = "COMPRA LOJA DE ROUPAS ZARA";
@@ -78,7 +79,7 @@ namespace ControleFinanceiroWeb.Tests
         [InlineData("   ")]
         public void IdentifyCategory_ShouldReturnNull_WhenDescriptionIsInvalidOrEmpty(string? invalidDescription)
         {
-            var service = new CategoryIdentificationService(context: null!);
+            var service = new CategoryIdentificationService(context: null!, logger: NullLogger<CategoryIdentificationService>.Instance);
             var categories = GetMockCategories();
 
             int? resultId = service.IdentifyCategory(invalidDescription, categories);

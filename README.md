@@ -126,7 +126,6 @@ A few decisions worth calling out:
 Known gaps, in the order they are worth closing:
 
 - [ ] A screen to change the PIN; today it is set once on first access
-- [ ] Structured logging; several `catch` blocks still swallow the exception
 - [ ] Service-level tests against an in-memory provider
 - [ ] Fix horizontal overflow on narrow screens
 

@@ -120,7 +120,7 @@ async function loadAndBindTransactionForm(bodyEl, id) {
             window.jQuery.validator.unobtrusive.parse("#formTransaction");
         }
     } else {
-        bodyEl.innerHTML = `<div class="alert alert-danger mb-0">${result.message || 'Erro ao carregar o formulário.'}</div>`;
+        bodyEl.innerHTML = `<div class="alert alert-danger mb-0">${escapeHtml(result.message) || 'Erro ao carregar o formulário.'}</div>`;
     }
 }
 
@@ -359,7 +359,7 @@ function buildImportCategorySelect(selectedId, rowIndex, categories) {
         const prefix = cat.entryType === 'F' ? 'Fixo' : 'Variável';
         const selected = cat.id === selectedId ? 'selected' : '';
 
-        selectHtml += `<option value="${cat.id}" ${selected}>${cat.description} [${prefix}]</option>`;
+        selectHtml += `<option value="${cat.id}" ${selected}>${escapeHtml(cat.description)} [${prefix}]</option>`;
     });
 
     selectHtml += '</select>';
@@ -380,31 +380,33 @@ function createImportPreviewRow(item, categories) {
 
     const catSelectHtml = buildImportCategorySelect(item.categoryId, item.rowIndex, categories);
 
-    const dateCell = item.isValid && item.parsedDate 
-        ? formatDateString(item.parsedDate) 
-        : `<span class="text-danger fw-semibold" title="${item.errorMessage}">${item.rawDate || '[Vazio]'}</span>`;
+    const errorTitle = escapeHtml(item.errorMessage);
 
-    const dueDateCell = item.isValid && item.parsedDueDate 
-        ? formatDateString(item.parsedDueDate) 
-        : `<span class="text-danger fw-semibold" title="${item.errorMessage}">${item.rawDueDate || '[Vazio]'}</span>`;
+    const dateCell = item.isValid && item.parsedDate
+        ? formatDateString(item.parsedDate)
+        : `<span class="text-danger fw-semibold" title="${errorTitle}">${escapeHtml(item.rawDate) || '[Vazio]'}</span>`;
 
-    const descCell = item.description 
-        ? `<span>${item.description}</span>` 
+    const dueDateCell = item.isValid && item.parsedDueDate
+        ? formatDateString(item.parsedDueDate)
+        : `<span class="text-danger fw-semibold" title="${errorTitle}">${escapeHtml(item.rawDueDate) || '[Vazio]'}</span>`;
+
+    const descCell = item.description
+        ? `<span>${escapeHtml(item.description)}</span>`
         : `<span class="text-danger fw-semibold">[Vazio]</span>`;
 
     const amountFormatted = item.parsedAmount !== null && item.parsedAmount !== undefined
         ? formatCurrency(item.parsedAmount)
-        : `<span class="text-danger fw-semibold" title="${item.errorMessage}">${item.rawAmount || '[Vazio]'}</span>`;
+        : `<span class="text-danger fw-semibold" title="${errorTitle}">${escapeHtml(item.rawAmount) || '[Vazio]'}</span>`;
 
-    const statusCell = item.isValid 
-        ? '<i class="bi bi-check-circle-fill text-success fs-5"></i>' 
-        : `<i class="bi bi-exclamation-triangle-fill text-danger fs-5" title="${item.errorMessage}"></i>`;
+    const statusCell = item.isValid
+        ? '<i class="bi bi-check-circle-fill text-success fs-5"></i>'
+        : `<i class="bi bi-exclamation-triangle-fill text-danger fs-5" title="${errorTitle}"></i>`;
 
     tr.innerHTML = `
         <td>${item.rowIndex}</td>
         <td>${dateCell}</td>
         <td>${dueDateCell}</td>
-        <td class="text-truncate" style="max-width: 250px;" title="${item.description}">${descCell}</td>
+        <td class="text-truncate" style="max-width: 250px;" title="${escapeHtml(item.description)}">${descCell}</td>
         <td>${catSelectHtml}</td>
         <td class="text-end fw-bold">${amountFormatted}</td>
         <td class="text-center">${statusCell}</td>
@@ -480,7 +482,7 @@ async function handlePasteEvent(e) {
 
         updateImportFooterControls(hasErrors);
     } else {
-        tbody.innerHTML = `<tr><td colspan="7" class="text-center text-danger py-4">${result.message || 'Erro ao carregar prévia dos dados.'}</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="7" class="text-center text-danger py-4">${escapeHtml(result.message) || 'Erro ao carregar prévia dos dados.'}</td></tr>`;
     }
 }
 

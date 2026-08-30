@@ -14,11 +14,13 @@ namespace ControleFinanceiroWeb.Services.Categories
     public class CategoryService : ICategoryService
     {
         private readonly AppDbContext _context;
+        private readonly ILogger<CategoryService> _logger;
 
         // Initializes a new instance of CategoryService.
-        public CategoryService(AppDbContext context)
+        public CategoryService(AppDbContext context, ILogger<CategoryService> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         #region Public Methods
@@ -94,8 +96,10 @@ namespace ControleFinanceiroWeb.Services.Categories
                 else
                     return await UpdateCategoryAsync(model, id, entryType);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _logger.LogError(ex, "Failed to save a category.");
+
                 return new ServiceResult
                 {
                     Success = false,
@@ -130,8 +134,10 @@ namespace ControleFinanceiroWeb.Services.Categories
 
                 return new ServiceResult { Success = true, Message = "Categoria excluída com sucesso." };
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _logger.LogError(ex, "Failed to delete a category.");
+
                 return new ServiceResult { Success = false, Message = "Ocorreu um erro ao excluir a categoria." };
             }
         }

@@ -15,13 +15,15 @@ namespace ControleFinanceiroWeb.Services.Transactions
     public class TransactionService : ITransactionService
     {
         private readonly AppDbContext _context;
+        private readonly ILogger<TransactionService> _logger;
         private readonly ICategoryIdentificationService _categoryIdentificationService;
 
         // Initializes a new instance of TransactionService.
-        public TransactionService(AppDbContext context, ICategoryIdentificationService categoryIdentificationService)
+        public TransactionService(AppDbContext context, ICategoryIdentificationService categoryIdentificationService, ILogger<TransactionService> logger)
         {
             _context = context;
             _categoryIdentificationService = categoryIdentificationService;
+            _logger = logger;
         }
 
         #region Public Methods
@@ -113,8 +115,10 @@ namespace ControleFinanceiroWeb.Services.Transactions
                 else
                     return await UpdateTransactionAsync(model, id);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _logger.LogError(ex, "Failed to save a statement.");
+
                 return new ServiceResult
                 {
                     Success = false,
@@ -140,8 +144,10 @@ namespace ControleFinanceiroWeb.Services.Transactions
 
                 return new ServiceResult { Success = true, Message = "Movimentação excluída com sucesso." };
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _logger.LogError(ex, "Failed to delete statement.");
+
                 return new ServiceResult { Success = false, Message = "Ocorreu um erro ao excluir a movimentação." };
             }
         }
@@ -213,8 +219,10 @@ namespace ControleFinanceiroWeb.Services.Transactions
                         : $"{newStatements.Count} lançamentos foram importados com sucesso!"
                 };
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _logger.LogError(ex, "Failed to save the imported statements.");
+
                 return new ServiceResult { Success = false, Message = "Ocorreu um erro ao gravar a importação no banco de dados." };
             }
         }

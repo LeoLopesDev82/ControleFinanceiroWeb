@@ -101,7 +101,7 @@ async function showCategoryListMode() {
     if (result.success) {
         bodyEl.innerHTML = result.data;
     } else {
-        bodyEl.innerHTML = `<div class="alert alert-danger mb-0">${result.message || 'Erro ao carregar a listagem de categorias.'}</div>`;
+        bodyEl.innerHTML = `<div class="alert alert-danger mb-0">${escapeHtml(result.message) || 'Erro ao carregar a listagem de categorias.'}</div>`;
     }
 }
 
@@ -152,7 +152,7 @@ async function openCategoryFormModal(id = 0) {
             window.jQuery.validator.unobtrusive.parse("#formCategory");
         }
     } else {
-        bodyEl.innerHTML = `<div class="alert alert-danger mb-0">${result.message || 'Erro ao carregar o formulário.'}</div>`;
+        bodyEl.innerHTML = `<div class="alert alert-danger mb-0">${escapeHtml(result.message) || 'Erro ao carregar o formulário.'}</div>`;
     }
 }
 

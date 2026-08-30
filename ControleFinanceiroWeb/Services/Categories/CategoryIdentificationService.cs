@@ -12,11 +12,13 @@ namespace ControleFinanceiroWeb.Services.Categories
     public class CategoryIdentificationService : ICategoryIdentificationService
     {
         private readonly AppDbContext _context;
+        private readonly ILogger<CategoryIdentificationService> _logger;
 
         // Initializes a new instance of CategoryIdentificationService.
-        public CategoryIdentificationService(AppDbContext context)
+        public CategoryIdentificationService(AppDbContext context, ILogger<CategoryIdentificationService> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         #region Public Methods
@@ -78,8 +80,10 @@ namespace ControleFinanceiroWeb.Services.Categories
                     Message = BuildSuccessResultMessage(identifiedCount)
                 };
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _logger.LogError(ex, "Failed to run the automatic category identification.");
+
                 return new ServiceResult
                 {
                     Success = false,
