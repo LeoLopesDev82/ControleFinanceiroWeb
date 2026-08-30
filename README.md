@@ -1,5 +1,9 @@
 # 💰 ControleFinanceiroWeb
 
+[![build](https://github.com/LeoLopesDev82/ControleFinanceiroWeb/actions/workflows/build.yml/badge.svg)](https://github.com/LeoLopesDev82/ControleFinanceiroWeb/actions/workflows/build.yml)
+[![.NET](https://img.shields.io/badge/.NET-9.0-512BD4)](https://dotnet.microsoft.com/download)
+[![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+
 A personal finance web application built with ASP.NET Core MVC, used daily to
 run a household's budget. It is a full web rewrite of an earlier Windows Forms
 application, now responsive and reachable from any device on the home network.
