@@ -709,3 +709,11 @@ body {
     animation-duration: 0.01s;
   }
 }
+
+/* The PIN fields are masked by CSS rather than type="password", because a
+   password field makes the browser offer to store the PIN and to fill it back
+   in. pin.js falls back to a password field where this is unsupported. */
+.pin-input {
+  -webkit-text-security: disc;
+  text-security: disc;
+}

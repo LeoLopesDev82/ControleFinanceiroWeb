@@ -61,7 +61,8 @@ out of a spreadsheet.
 - Wrong attempts throttle progressively, from 30 seconds on the third to
   15 minutes, and the wait survives a restart
 - A session belongs to one run of the application and to one browser window,
-  so the PIN is asked for whenever either is started again
+  so the PIN is asked for whenever either is started again, and the browser is
+  told not to offer to save it
 - Changing the PIN signs the other devices out, so they must enter the new one
 
 **Dashboard**
@@ -179,6 +180,15 @@ A few decisions worth calling out:
   for the PIN, which fits a household that opens it when needed and closes it
   afterwards. Left running as a permanent service the guarantee weakens to
   "until the next restart", and an idle timeout would be the better fit.
+- **The PIN box is not a password field.** Browsers offer to remember what
+  they recognise as a password and fill it back in later, which on a machine
+  the household shares undoes the point of asking for a PIN at all. The field
+  is a text input masked with `-webkit-text-security`, so the browser never
+  sees a credential. Masking is presentational either way — a password field
+  does not hide the value from the page either — but this way it depends on
+  the stylesheet loading, so the script restores a password field where the
+  property is unsupported. It suits a home setup; anyone who would rather have
+  the conventional behaviour can set the inputs back to `type="password"`.
 - **All database access is asynchronous**, end to end.
 
 ## 🗺️ Roadmap

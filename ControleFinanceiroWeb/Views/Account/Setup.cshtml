@@ -24,11 +24,11 @@
     <label asp-for="Pin" class="form-label small text-muted">PIN</label>
     <input asp-for="Pin"
            class="form-control pin-input mb-2"
-           type="password"
+           type="text"
            inputmode="numeric"
            pattern="[0-9]*"
            maxlength="6"
-           autocomplete="off"
+           autocomplete="one-time-code"
            autofocus
            aria-label="Novo PIN" />
     <span asp-validation-for="Pin" class="text-danger d-block text-center small"></span>
@@ -36,11 +36,11 @@
     <label asp-for="ConfirmPin" class="form-label small text-muted mt-3">Confirme o PIN</label>
     <input asp-for="ConfirmPin"
            class="form-control pin-input"
-           type="password"
+           type="text"
            inputmode="numeric"
            pattern="[0-9]*"
            maxlength="6"
-           autocomplete="off"
+           autocomplete="one-time-code"
            aria-label="Confirmação do PIN" />
     <span asp-validation-for="ConfirmPin" class="text-danger d-block text-center small"></span>
 
