@@ -16,6 +16,8 @@ namespace ControleFinanceiroWeb.Controllers
     {
         public const string SecurityStampClaim = "cfw:stamp";
 
+        public const string InstanceClaim = "cfw:instance";
+
         private readonly ISecurityService _securityService;
 
         public AccountController(ISecurityService securityService)
@@ -139,14 +141,19 @@ namespace ControleFinanceiroWeb.Controllers
             var claims = new List<Claim>
             {
                 new(ClaimTypes.Name, "Casa"),
-                new(SecurityStampClaim, await _securityService.GetSecurityStampAsync() ?? string.Empty)
+                new(SecurityStampClaim, await _securityService.GetSecurityStampAsync() ?? string.Empty),
+                new(InstanceClaim, AppInstance.Id)
             };
 
             var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
+            // A session cookie, so closing the browser ends the session and the
+            // PIN is asked for again. The household budget is reached from
+            // machines other people also use, and a cookie kept on disk would
+            // hand everything over to whoever opens the browser next.
             var properties = new AuthenticationProperties
             {
-                IsPersistent = true
+                IsPersistent = false
             };
 
             await HttpContext.SignInAsync(

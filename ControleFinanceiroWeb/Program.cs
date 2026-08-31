@@ -61,17 +61,23 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.Cookie.SameSite = SameSiteMode.Lax;
         options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
 
-        // Changing the PIN issues a new security stamp. A cookie carrying the
-        // previous one belongs to a device signed in before the change, so it
-        // is rejected and that device has to enter the new PIN.
+        // A session is only accepted while two things still hold: it was issued
+        // by this run of the application, and the PIN has not changed since.
+        // The first makes a restart ask for the PIN again without relying on
+        // the browser discarding a session cookie; the second signs the other
+        // devices out when the PIN is replaced.
         options.Events.OnValidatePrincipal = async context =>
         {
             var securityService = context.HttpContext.RequestServices.GetRequiredService<ISecurityService>();
 
             var currentStamp = await securityService.GetSecurityStampAsync();
             var cookieStamp = context.Principal?.FindFirst(AccountController.SecurityStampClaim)?.Value;
+            var cookieInstance = context.Principal?.FindFirst(AccountController.InstanceClaim)?.Value;
 
-            if (currentStamp != null && currentStamp == cookieStamp)
+            bool sameRun = cookieInstance == AppInstance.Id;
+            bool samePin = currentStamp != null && currentStamp == cookieStamp;
+
+            if (sameRun && samePin)
                 return;
 
             context.RejectPrincipal();

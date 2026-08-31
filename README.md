@@ -60,7 +60,8 @@ out of a spreadsheet.
 - Stored as a PBKDF2 hash, never in clear text
 - Wrong attempts throttle progressively, from 30 seconds on the third to
   15 minutes, and the wait survives a restart
-- Persistent cookie, so each device is asked once and not again
+- A session belongs to one run of the application and to one browser window,
+  so the PIN is asked for whenever either is started again
 - Changing the PIN signs the other devices out, so they must enter the new one
 
 **Dashboard**
@@ -170,6 +171,14 @@ A few decisions worth calling out:
   missing.
 - **Entry types are a typed enum**, mapped to the underlying `CHAR(1)` through
   an EF Core value converter rather than passing `'F'`/`'V'` around.
+- **A session belongs to one run of the application.** The cookie carries an
+  identifier generated at startup, and a request whose identifier no longer
+  matches is signed out. Session cookies alone were not enough: browsers that
+  restore the previous session bring them back, so closing the window was no
+  guarantee. Tying sessions to the process means starting the application asks
+  for the PIN, which fits a household that opens it when needed and closes it
+  afterwards. Left running as a permanent service the guarantee weakens to
+  "until the next restart", and an idle timeout would be the better fit.
 - **All database access is asynchronous**, end to end.
 
 ## 🗺️ Roadmap
