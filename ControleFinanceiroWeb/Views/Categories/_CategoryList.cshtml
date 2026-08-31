@@ -39,7 +39,7 @@
                         bool isCredit = item.EntryType == "Receita"; // Wait, in c.EntryType == 'F' ? "Fixo" : "Variável", isCredit is not needed but we can color it
                         bool isFixed = item.EntryType == "Fixo";
                       
-                        <tr class="align-middle">
+                        <tr class="align-middle" data-row-id="@item.Id">
                             <td class="fw-bold text-dark">@item.Description</td>
                         
                             <td>

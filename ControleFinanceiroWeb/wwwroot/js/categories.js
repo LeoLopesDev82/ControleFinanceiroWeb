@@ -1,3 +1,9 @@
+//#region Variables
+
+const CategoryHighlightKey = 'cfw:lastCategory';
+
+//#endregion
+
 //#region Listeners
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -100,6 +106,8 @@ async function showCategoryListMode() {
 
     if (result.success) {
         bodyEl.innerHTML = result.data;
+
+        RowHighlight.apply(CategoryHighlightKey, bodyEl);
     } else {
         bodyEl.innerHTML = `<div class="alert alert-danger mb-0">${escapeHtml(result.message) || 'Erro ao carregar a listagem de categorias.'}</div>`;
     }
@@ -167,6 +175,8 @@ async function saveCategory() {
     const result = await BaseFetch.post('/Categories/Save', new FormData(form));
 
     if (result.success) {
+        RowHighlight.remember(CategoryHighlightKey, result.id);
+
         showToast(result.message || "Categoria salva com sucesso!");
 
         await showCategoryListMode();

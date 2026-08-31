@@ -185,3 +185,57 @@ function escapeHtml(value) {
         .replace(/"/g, '&quot;')
         .replace(/'/g, '&#39;');
 }
+
+/**
+ * RowHighlight - Brings the row a save just touched back into view.
+ *
+ * Saving reloads the transactions page and re-renders the category list, and
+ * the row that was edited often lands off screen. The identifier is stashed
+ * before the refresh and read once afterwards, so the row can be scrolled to
+ * and flashed. sessionStorage keeps it to the tab and survives the reload.
+ */
+class RowHighlight {
+    /**
+     * Records the row to highlight after the next refresh.
+     * @param {string} key - Storage key identifying the grid.
+     * @param {number|string} id - Identifier of the affected row.
+     */
+    static remember(key, id) {
+        if (id === null || id === undefined || id === '') return;
+
+        try {
+            sessionStorage.setItem(key, String(id));
+        } catch {
+            // Private browsing can refuse storage; the highlight is optional.
+        }
+    }
+
+    /**
+     * Scrolls to the remembered row and flashes it, then forgets it.
+     * @param {string} key - Storage key identifying the grid.
+     * @param {ParentNode} [scope] - Where to look, defaults to the document.
+     */
+    static apply(key, scope = document) {
+        let id = null;
+
+        try {
+            id = sessionStorage.getItem(key);
+
+            sessionStorage.removeItem(key);
+        } catch {
+            return;
+        }
+
+        if (!id) return;
+
+        const row = scope.querySelector(`[data-row-id="${CSS.escape(id)}"]`);
+
+        if (!row) return;
+
+        row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+        row.classList.add('row-highlight');
+
+        row.addEventListener('animationend', () => row.classList.remove('row-highlight'), { once: true });
+    }
+}

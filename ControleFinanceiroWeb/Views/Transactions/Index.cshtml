@@ -175,7 +175,7 @@
                     {
                         bool isCredit = item.Amount >= 0;
 
-                        <tr class="align-middle">
+                        <tr class="align-middle" data-row-id="@item.Id">
                             <td class="text-nowrap fw-semibold">@(item.TransactionDate?.ToString("dd/MM/yyyy") ?? "-")</td>
                             <td class="text-nowrap text-muted">@(item.DueDate?.ToString("dd/MM/yyyy") ?? "-")</td>
 

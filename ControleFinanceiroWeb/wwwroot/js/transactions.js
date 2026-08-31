@@ -2,6 +2,8 @@
 
 const statementTypeId = parseInt(document.getElementById('transactionsContainer')?.dataset?.statementTypeId || '0', 10);
 
+const TransactionHighlightKey = 'cfw:lastTransaction';
+
 let cachedCategories = null;
 
 //#endregion
@@ -11,6 +13,8 @@ let cachedCategories = null;
  * Setup event listeners for transaction buttons and Excel copy-paste imports.
  */
 document.addEventListener('DOMContentLoaded', () => {
+    RowHighlight.apply(TransactionHighlightKey);
+
     const btnSave = document.getElementById('btnSaveTransaction');
 
     if (btnSave) {
@@ -158,6 +162,8 @@ async function saveTransaction() {
     const result = await BaseFetch.post('/Transactions/Save', new FormData(form));
 
     if (result.success) {
+        RowHighlight.remember(TransactionHighlightKey, result.id);
+
         showToast(result.message || "Movimentação salva com sucesso!");
         setTimeout(() => window.location.reload(), 1000);
     } else {

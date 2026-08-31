@@ -692,3 +692,20 @@ body {
     justify-content: center;
   }
 }
+
+/* Flashes the row a save just touched, so it can be picked out after the
+   grid refreshes and the scroll position changes. */
+@keyframes row-highlight-fade {
+  0%   { background-color: rgba(25, 135, 84, 0.28); }
+  100% { background-color: transparent; }
+}
+
+.row-highlight > td {
+  animation: row-highlight-fade 2.4s ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .row-highlight > td {
+    animation-duration: 0.01s;
+  }
+}
